@@ -55,6 +55,16 @@ public class MyCompValue {
         throw new RuntimeException("error : "+join);
     }
 
+    public static String toStr(int... arr){
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+        for (int i : arr){
+            sb.append(i + " ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     public static void swap(int[]arr, int i, int j){
         if (i == j) return;
         arr[i] = arr[i]^arr[j];

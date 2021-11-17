@@ -7,7 +7,7 @@ import com.zs.xiaobai.common.MyCompValue;
  * 1. 当前节点的父节点
  * 2. 当前节点的左子节点
  */
-public class Code01_Heap {
+public class Code02_Heap {
     public static class MyMaxHeap{
         private int[] heap; // 堆空间
         private final int limit; // 堆容量
@@ -50,15 +50,22 @@ public class Code01_Heap {
          * @return
          */
         public int poll(){
-            return 0;
+            if (size ==0 ) throw new RuntimeException("heap is empty");
+            int ans = heap[size-1]; // 取出堆顶数据。
+            MyCompValue.swap(heap, 0, --size); // 交换堆顶和堆底数据。堆大小减一
+            heapify(heap, 0, size);
+            return ans;
         }
 
         /**
          * 从堆顶取出数据不删除.
+         * 如果堆为空抛出异常。
+         * 返回堆顶的数据。
          * @return
          */
         public int peek(){
-            return 0;
+            if (size == 0) throw new RuntimeException("heap is empty");
+            return heap[0];
         }
 
         /**
@@ -82,7 +89,16 @@ public class Code01_Heap {
          * @param size
          */
         private void heapify(int[] heap, int index, int size){
-            int i = index * 2 + 1; // 左子节点
+            int left = index * 2 + 1; // 左子节点
+            while (left < size){ // 当左子节点不超出堆大小时进行循环
+                int largest = left+1<size && heap[left] < heap[left+1]? left+1: left;
+                if (heap[index] >= heap[largest]) { // 如果当前数不小于最大子节点，退出循环。
+                    break;
+                }
+                MyCompValue.swap(heap, index, largest); // 交换当前数与最大子节点。
+                index = largest; // 更新当前节点位置
+                left = index * 2 +1; // 更新左子节点位置。
+            }
         }
     }
 }
