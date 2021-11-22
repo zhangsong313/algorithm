@@ -1,5 +1,9 @@
 package com.zs.tixi.class8;
 
+import com.zs.xiaobai.common.MyCompValue;
+
+import java.util.function.Function;
+
 /**
  * 增强堆和练习题
  * 1. 最大线段重合问题（用堆实现）:
@@ -32,4 +36,73 @@ package com.zs.tixi.class8;
  *      要求，根据系统给定的arr数组，op数组和得奖区大小K，遍历arr，每i位置输出当前得奖名单，要求每次输出时间复杂度O(1)（实际需求是要求实时展示得奖区的情况）
  */
 public class T {
+    public static void main(String[] args) {
+        checkCoverMax(10, 100, 100, Code01_CoverMax::coverMax);
+    }
+
+    /**
+     * 最多线段重合问题对数器
+     * @param times 测试次数
+     * @param maxSegCount 最大线段数量
+     * @param maxSegLength 最大线段长度（起始位置0-100随机位置）
+     * @param fun 测试方法，接收一个线段数组，返回最多重合数
+     */
+    public static void checkCoverMax(int times, int maxSegCount, int maxSegLength,
+                                     Function<Code01_CoverMax.Segment[], Integer> fun){
+        MyCompValue.times(times, ()->{
+            int segCount = (int)(Math.random()*(maxSegCount))+1;
+            Code01_CoverMax.Segment[] segments = new Code01_CoverMax.Segment[segCount];
+            for (int i = 0; i < segments.length; i++) {
+                int start = (int)(Math.random()*(100));
+                int segLength = (int)(Math.random()*(maxSegLength)+1);
+                Code01_CoverMax.Segment seg = new Code01_CoverMax.Segment(start, start+segLength);
+                segments[i] = seg;
+            }
+
+            Integer ans = fun.apply(segments);
+            Integer ans2 = countCoverMax(segments);
+            if (ans.equals(ans2) == false){
+                System.out.println("测试最多线段重合错误：");
+                System.out.print("线段数组：[");
+                for (int i = 0; i < segments.length; i++) {
+                    System.out.print(segments[i]+" ");
+                }
+                System.out.println("]");
+
+                System.out.println("错误结果 ： "+ans);
+                System.out.println("正确结果 ： "+ans2);
+            }
+        });
+    }
+
+    /**
+     * 暴力方法
+     * @param segments
+     * @return
+     */
+    private static Integer countCoverMax(Code01_CoverMax.Segment[] segments) {
+        if (segments == null || segments.length==0) return 0;
+        // 找到最小start。
+        int lessStart=Integer.MAX_VALUE;
+        for (int i = 0; i < segments.length; i++) {
+            lessStart = lessStart<segments[i].start?lessStart:segments[i].start;
+        }
+        // 找到最大end。
+        int greatestEnd = Integer.MIN_VALUE;
+        for (int i = 0; i < segments.length; i++) {
+            greatestEnd = greatestEnd>segments[i].end?greatestEnd:segments[i].end;
+        }
+        // 在最小start与最小end中间，遍历0.5这种位置，每个位置统计所有end小于该位置，start大于该位置的线段。
+        int ans = 0;
+        for (double i = lessStart+0.5; i < greatestEnd; i++) {
+            int ans2 = 0;
+            for (int j = 0; j < segments.length; j++) {
+                if (segments[j].start<i && segments[j].end>i){
+                    ans2++;
+                }
+            }
+            ans = ans>ans2?ans:ans2;
+        }
+        return ans;
+    }
 }
