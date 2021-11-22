@@ -173,4 +173,11 @@ public class HeapGreater<T> {
         heap.forEach(i->list.add(i));
         return list;
     }
+
+    /**
+     * 返回是否包含某元素
+     */
+    public boolean contains(T obj){
+        return heap.contains(obj);
+    }
 }
