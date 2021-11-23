@@ -15,6 +15,7 @@ public class HeapGreater<T> {
     private Comparator<T> comp; // 对象的比较器。
 
     // 构造方法
+    // 说明：小根堆。
     public HeapGreater(Comparator<T> comp){
         this.size = 0;
         this.heap = new ArrayList<T>();
@@ -85,7 +86,7 @@ public class HeapGreater<T> {
      * 对堆顶执行heapify。
      * 返回记录的堆顶元素。
      */
-    private T poll(){
+    public T poll(){
         if(isEmpty()) throw new RuntimeException("heap is empty!");
 
         T ans = heap.get(0);

@@ -1,5 +1,8 @@
 package com.zs.tixi.class8;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 /*
  * 3. 改写堆练习题：给消费最高的客户发奖。要求每次消费发生后,实时展示获奖人和消费信息。
  *      给定一个整型数组int[] arr，和一个布尔型数组boolean[] op。两个数组一定等长，arr[i]表示客户编号, op[i]表示客户发生了一次操作
@@ -29,15 +32,126 @@ public class Code02_EveryStepShowBoss {
      * 创建List<List<Customer>> everStepWinList作为每一步得奖名单列表的集合
      * 循环事件数组arr：
      *      查询map中是否存在当前客户，如果不存在：
-     *          消费为退货：无效消费，直接进入下次循环。
+     *          消费为退货：无效消费，不做任何操作。
      *          消费为买货：将当前客户初始化后放入候选区，在map中登记客户
      *      如果存在，map中取出信息更新客户的消费情况，
      *          如果更新后消费为0，将客户从map中删除，分别判断得奖区和候选区中是否存在该客户并删除。
      *          如果更新后消费不为0，分别判断候选区和得奖区是否包含客户并更新加强堆。
-     *      如果候选区为空：进入下次循环。
-     *      从得奖区弹出哪些消费小于候选区堆顶的客户，这些客户更新消费时间后进入候选区。
-     *      如果得奖区size小于K，从候选区弹出客户直到得奖区size等于K。
-     *      从winHeap获取所有元素组成新列表加入everStepWinList。（此处应该不能直接存入对象，而是重新创建Customer，否则历史得奖信息会发生变化）
+     *      如果候选区为空：【直接返回得奖区进入下次循环】。
+     *      如果得奖区size小于K，从候选区弹出客户直到得奖区size等于K。（得奖区客户被删除情况）
+     *      如果候选区堆顶消费金额大于得奖区的堆顶，互相弹出一个客户到对方堆。（候选区消费增加，或得奖区消费减少导致）
+     *      返回得奖区进入下次循环, 从winHeap获取所有元素组成新列表加入everStepWinList。（此处应该不能直接存入对象，而是重新创建Customer，否则历史得奖信息会发生变化）
      */
-    public static void everyStepShowBoss(){}
+    public static List<List<Integer>> everyStepShowBoss(int[] arr, boolean[] op, int K){
+        HeapGreater<Customer> candHeap = new HeapGreater<>(new CandComparator());
+        HeapGreater<Customer> winHeap = new HeapGreater<>(new WinComparator());
+        Map<Integer, Customer> customerMap = new HashMap<>();
+        List<List<Integer>> winListList = new ArrayList<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            int id = arr[i];
+            boolean isBuy = op[i];
+
+            Customer customer = customerMap.get(id);
+            if (customer == null){
+                if (isBuy){
+                    customer = new Customer(id, 1, i);
+                    candHeap.add(customer);
+                    customerMap.put(id, customer);
+                }
+            } else {
+                customer.count = isBuy?customer.count+1:customer.count-1;
+                if (customer.count == 0 ){
+                    customerMap.remove(id);
+                    if (candHeap.contains(customer)) {
+                        candHeap.remove(customer);
+                    } else {
+                        winHeap.remove(customer);
+                    }
+                } else {
+                    if(candHeap.contains(customer)){
+                        candHeap.resign(customer);
+                    } else {
+                        winHeap.resign(customer);
+                    }
+                }
+            }
+
+            if (candHeap.isEmpty()) {
+                winListList.add(getHeapElements(winHeap));
+                continue;
+            }
+
+            if (winHeap.size()<K){
+                while (!candHeap.isEmpty()){
+                    if (winHeap.size() == K){
+                        break;
+                    }
+                    Customer cand = candHeap.poll();
+                    cand.time = id;
+                    winHeap.add(cand);
+                }
+            }
+
+            if(!candHeap.isEmpty()){
+                Customer candPeek = candHeap.peek();
+                Customer winPeek = winHeap.peek();
+                if (winPeek.count<candPeek.count){
+                    winPeek.time = id;
+                    candPeek.time = id;
+                    winHeap.poll();
+                    candHeap.poll();
+                    winHeap.add(candPeek);
+                    candHeap.add(winPeek);
+                }
+            }
+
+            winListList.add(getHeapElements(winHeap));
+        }
+
+        return winListList;
+    }
+
+    private static List<Integer> getHeapElements(HeapGreater<Customer> heap){
+        return heap.getAllElements().stream().map(i->i.id).collect(Collectors.toList());
+    }
+
+    /**
+     * 消费者
+     */
+    public static class Customer{
+        public int id; // 消费者编号
+        public int count; // 消费数量
+        public int time; // 消费时点
+
+        public Customer(int id, int count, int time){
+            this.id = id;
+            this.count = count;
+            this.time = time;
+        }
+    }
+
+    /**
+     * 候选区比较器，
+     * 消费最高在前，消费最高的取最先消费的在前。
+     */
+    public static class CandComparator implements Comparator<Customer>{
+
+        @Override
+        public int compare(Customer o1, Customer o2) {
+            return o2.count == o1.count ? o1.time-o2.time : o2.count-o1.count;
+        }
+    }
+
+    /**
+     * 得奖区比较器
+     * 消费最低的在前，消费最低的取最先消费的在前。
+     */
+    public static class WinComparator implements Comparator<Customer>{
+
+        @Override
+        public int compare(Customer o1, Customer o2) {
+            return o1.count == o2.count ? o1.time-o2.time : o1.count-o2.count;
+        }
+    }
 }
