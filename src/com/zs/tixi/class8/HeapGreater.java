@@ -101,20 +101,20 @@ public class HeapGreater<T> {
      * 对指定位置元素执行heapify操作。
      * 找到当前元素左子节点。
      * 循环：左子节点不超出堆范围
-     *      从两个子节点中选出一个较大节点。
-     *      当前节点小于等于较大子节点：break
-     *      交换当前节点与较大子节点。
-     *      更新当前节点变量为较大子节点。
+     *      从两个子节点中选出一个较小节点。
+     *      当前节点小于等于较小子节点：break
+     *      交换当前节点与较小子节点。
+     *      更新当前节点变量为较小子节点。
      *      更新左子节点变量。
      * @param index
      */
     private void heapify(int index) {
         int left = index*2+1;
         while(left < size ){
-            int largest = left+1<size && comp.compare(heap.get(left+1), heap.get(left)) > 0?left+1:left;
-            if(comp.compare(heap.get(index), heap.get(largest)) <=0) break;
-            swap(index, largest);
-            index = largest;
+            int lessest = left+1<size && comp.compare(heap.get(left+1), heap.get(left)) < 0?left+1:left;
+            if(comp.compare(heap.get(index), heap.get(lessest)) <=0) break;
+            swap(index, lessest);
+            index = lessest;
             left = index*2+1;
         }
     }
@@ -160,6 +160,8 @@ public class HeapGreater<T> {
 //        }
 
         Integer index = map.get(data);
+        System.out.println("asdfasdf : "+index);
+        System.out.println("asdfasdf2 : "+(size-1));
         swap(index, size-1);
         heap.remove(--size);
         map.remove(data);
@@ -180,5 +182,44 @@ public class HeapGreater<T> {
      */
     public boolean contains(T obj){
         return heap.contains(obj);
+    }
+
+    /**
+     * 打印当前map的情况
+     */
+    public void printMap(){
+        System.out.println(map);
+    }
+
+    public static void main(String[] args) {
+        HeapGreater<Person> heap = new HeapGreater<>(new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.age-o2.age;
+            }
+        });
+        for (int i = 0; i < 20; i++) {
+            heap.add(new Person((int)(Math.random()*50)));
+            System.out.println(heap.getAllElements());
+
+        }
+        System.out.println("=22===");
+        while (!heap.isEmpty()){
+            heap.printMap();
+            heap.remove(heap.getAllElements().get(heap.size-1));
+            System.out.println(heap.getAllElements());
+        }
+    }
+
+    public static class Person{
+        public int age;
+        public Person(int age){
+            this.age = age;
+        }
+
+        @Override
+        public String toString() {
+            return ""+age;
+        }
     }
 }
