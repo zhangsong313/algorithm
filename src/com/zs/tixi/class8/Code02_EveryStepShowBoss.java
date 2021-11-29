@@ -65,11 +65,8 @@ public class Code02_EveryStepShowBoss {
                     customerMap.remove(id);
                     if (candHeap.contains(customer)) {
                         candHeap.remove(customer);
-                    } else if (winHeap.contains(customer)){
+                    } else {
                         winHeap.remove(customer);
-                    } else
-                    {
-                        throw new RuntimeException("系统异常，用户在两个区域都找不到...");
                     }
                 } else {
                     if(candHeap.contains(customer)){
@@ -91,7 +88,7 @@ public class Code02_EveryStepShowBoss {
                         break;
                     }
                     Customer cand = candHeap.poll();
-                    cand.time = id;
+                    cand.time = i;
                     winHeap.add(cand);
                 }
             }
@@ -100,8 +97,8 @@ public class Code02_EveryStepShowBoss {
                 Customer candPeek = candHeap.peek();
                 Customer winPeek = winHeap.peek();
                 if (winPeek.count<candPeek.count){
-                    winPeek.time = id;
-                    candPeek.time = id;
+                    winPeek.time = i;
+                    candPeek.time = i;
                     winHeap.poll();
                     candHeap.poll();
                     winHeap.add(candPeek);
@@ -131,6 +128,15 @@ public class Code02_EveryStepShowBoss {
             this.id = id;
             this.count = count;
             this.time = time;
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "id=" + id +
+                    ", count=" + count +
+                    ", time=" + time +
+                    '}';
         }
     }
 

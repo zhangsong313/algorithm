@@ -42,11 +42,11 @@ public class HeapGreater<T> {
     public void add(T data){
         // 当前元素加入heap列表。
         heap.add(data);
-        // 对size位置执行heapInsert。
-        heapInsert(size);
         // size加一。
         // 将当前元素登记到map中。
-        map.put(data, size++);
+        map.put(data, size);
+        // 对size位置执行heapInsert。
+        heapInsert(size++);
     }
 
     /**
@@ -149,23 +149,29 @@ public class HeapGreater<T> {
      * size--, heap删除堆底数据,map中删除指定元素
      * 对当前元素位置执行heapify
      */
-    public void remove(T data){
-//        Integer index = map.get(data);
-//        T lastObj = heap.get(size); // 记录最后一个元素。
-//        heap.remove(--size); // 删除最后一个元素
-//        map.remove(data);
-//        if (index != size){ // 删除的不是最后一个元素，需要调整index位置的元素，并执行heapify。
-//            heap.set(index, lastObj);
-//            heapify(index);
+    public void remove(T obj){
+//        T replace = heap.get(size - 1);
+//        int index = map.get(obj);
+//        map.remove(obj);
+//        heap.remove(--size);
+//        if (obj != replace) {
+//            heap.set(index, replace);
+//            map.put(replace, index);
+//            resign(replace);
 //        }
 
-        Integer index = map.get(data);
-        System.out.println("asdfasdf : "+index);
-        System.out.println("asdfasdf2 : "+(size-1));
+
+        Integer index = map.get(obj);
         swap(index, size-1);
         heap.remove(--size);
-        map.remove(data);
-        heapify(index);
+        map.remove(obj);
+        if (index != size){
+            heapify(index);
+            heapInsert(index);
+        }
+
+//        if (index != size)
+//        resign(heap.get(index));
     }
 
     /**
@@ -195,24 +201,30 @@ public class HeapGreater<T> {
         HeapGreater<Person> heap = new HeapGreater<>(new Comparator<Person>() {
             @Override
             public int compare(Person o1, Person o2) {
-                return o1.age-o2.age;
+                return o1.age== o2.age?o1.time-o2.time:o1.age-o2.age;
             }
         });
         for (int i = 0; i < 20; i++) {
             heap.add(new Person((int)(Math.random()*50)));
+            heap.printMap();
             System.out.println(heap.getAllElements());
 
         }
         System.out.println("=22===");
         while (!heap.isEmpty()){
+            System.out.println();
             heap.printMap();
-            heap.remove(heap.getAllElements().get(heap.size-1));
+            int removeIndex = 0;
+//            int removeIndex = (int)(Math.random()*heap.size);
+            System.out.println("remove : "+heap.getAllElements().get(removeIndex));
+            heap.remove(heap.getAllElements().get(removeIndex));
             System.out.println(heap.getAllElements());
         }
     }
 
     public static class Person{
         public int age;
+        public int time;
         public Person(int age){
             this.age = age;
         }
