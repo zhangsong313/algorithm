@@ -113,18 +113,64 @@ public class Code02_TrieTree {
          * 如果word为空，直接返回0；
          * word转化为字符数组
          * 创建变量currNode
+         * currNode指向root
+         * 遍历字符数组：
+         *      当前字符currChar。
+         *      currNode的map中不包含currChar.?
+         *          返回0；
+         *      找到下一个节点nextNode
+         *      currNode指向nextNode
+         * 返回currNode的end值。
+         *
          */
         public int count(String word){
-            return 0;
+
+            if (word == null) return 0;
+
+            char[] chars = word.toCharArray();
+            Node currNode = root;
+            for (int i = 0; i < chars.length; i++) {
+                char currChar = chars[i];
+                Node nextNode = currNode.nexts.get(Integer.valueOf(currChar));
+                if (nextNode == null){
+                    return 0;
+                }
+                currNode = nextNode;
+            }
+            return currNode.end;
         }
 
         /**
          * 查询符合指定前缀的字符串个数
+         *
+         * 如果prefix为空，返回0；
+         *
+         * prefix转化为字符数组
+         * 创建变量currNode 指向root.
+         * 遍历字符数组
+         *      当前字符currChar
+         *      currNode的map中不包含currChar?
+         *          返回c0.
+         *      找到下一节点nextNode
+         *      currNode指向nextNode
+         * 返回currNode.pass
          */
         public int countByPrefix(String prefix){
-            return 0;
+            if (prefix == null) return 0;
+
+            char[] chars = prefix.toCharArray();
+            Node currNode = root;
+            for (int i = 0; i < chars.length; i++) {
+                char currChar = chars[i];
+                Node nextNode = currNode.nexts.get(Integer.valueOf(currChar));
+                if (nextNode == null){
+                    return 0;
+                }
+
+                currNode = nextNode;
+            }
+
+            return currNode.pass;
         }
     }
-
-
 }

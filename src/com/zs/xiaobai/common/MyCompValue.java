@@ -32,7 +32,7 @@ public class MyCompValue {
         int l = (int)(Math.random()*(maxLength+1));
         int[] arr = new int[l];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (int)(Math.random()*(maxValue+1));
+            arr[i] = (int)(Math.random()*(2*maxValue+1))-maxValue;
         }
         return arr;
     }

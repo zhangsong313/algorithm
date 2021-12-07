@@ -1,5 +1,7 @@
 package com.zs.tixi.class9;
 
+import com.zs.xiaobai.common.MyCompValue;
+
 /**
  * 1. 前缀树：
  *      1）单个字符串中，字符从前到后的加到一棵多叉树上。
@@ -32,4 +34,7 @@ package com.zs.tixi.class9;
  *
  */
 public class T {
+    public static void main(String[] args) {
+        MyCompValue.checkSort(1000, 100 ,100, Code03_CountSort::countSort);
+    }
 }
