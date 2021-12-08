@@ -37,6 +37,15 @@ public class MyCompValue {
         return arr;
     }
 
+    public static int[] randomPositiveIntArr(int maxLength, int maxValue){
+        int l = (int)(Math.random()*(maxLength+1));
+        int[] arr = new int[l];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (int)(Math.random()*(maxValue+1));
+        }
+        return arr;
+    }
+
     public static void printArr(int[] arr){
         System.out.print("[");
         for (int i : arr){

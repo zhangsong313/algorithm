@@ -2,6 +2,9 @@ package com.zs.tixi.class9;
 
 import com.zs.xiaobai.common.MyCompValue;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+
 /**
  * 1. 前缀树：
  *      1）单个字符串中，字符从前到后的加到一棵多叉树上。
@@ -35,6 +38,20 @@ import com.zs.xiaobai.common.MyCompValue;
  */
 public class T {
     public static void main(String[] args) {
-        MyCompValue.checkSort(1000, 100 ,100, Code03_CountSort::countSort);
+//        MyCompValue.checkSort(1000, 100 ,100, Code03_CountSort::countSort);
+        checkRadixSort(10000, 100 ,100, Code04_RadixSort::radixSort);
+    }
+
+    public static void checkRadixSort(int times , int arrMaxLength, int arrMaxValue, Consumer<int[]> sortFun){
+        MyCompValue.times(times, ()->{
+            int[] arr = MyCompValue.randomPositiveIntArr(arrMaxLength, arrMaxValue);
+            int[] copyArr = Arrays.copyOf(arr, arr.length);
+            sortFun.accept(arr);
+            if (MyCompValue.isSorted(arr) == false){
+                System.out.println("排序有误");
+                MyCompValue.printArr(copyArr);
+                return;
+            }
+        });
     }
 }
