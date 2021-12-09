@@ -1,5 +1,7 @@
 package com.zs.tixi.class10;
 
+import java.util.Arrays;
+
 /**
  * 1. 排序算法总结：
  *              | 时间复杂度     | 空间复杂度 | 稳定性   |
@@ -59,4 +61,7 @@ package com.zs.tixi.class10;
  *          要求：时间复杂度O(N)，额外空间复杂度O(1)
  */
 public class T {
+    public static void main(String[] args) {
+        Arrays.sort(new int[0]);
+    }
 }

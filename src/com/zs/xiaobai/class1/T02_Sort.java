@@ -11,6 +11,15 @@ import com.zs.xiaobai.common.MyCompValue;
  */
 public class T02_Sort {
 
+    /**
+     * 遍历[0..arr.length-1]:i
+     *      定义minIndex=i;
+     *      遍历[i+1..arr.length-1]:j
+     *          如果arr[j]<arr[minIndex]
+     *              minIndex = j
+     *      此时minIndex为i位置以后最小值的位置，交换i位置与minIndex位置的数。（该步骤将i位置上的数交换到了数组中的某一位置，破坏了排序稳定性）
+     * @param arr
+     */
     private static void selectSort(int[] arr){
         if(arr == null || arr.length<2){
             return;
@@ -27,6 +36,13 @@ public class T02_Sort {
         }
     }
 
+    /**
+     * 循环[0..arr.length-1]:i
+     *      循环[arr.length-1..i+1]:j （该次循环跑完，i位置变成了最小值）
+     *          如果arr[j]<arr[j-1] （由于每次是相邻位置做交换，所以每个位置的数最多只向移动一位，不会破坏排序稳定性）
+     *              交换j位置和j-1位置.
+     * @param arr
+     */
     private static void bubbleSort2(int[] arr){
         if(arr == null || arr.length<2){
             return ;
@@ -56,6 +72,15 @@ public class T02_Sort {
         }
     }
 
+    /**
+     * 循环[1.. arr.length-1]:i
+     *      循环[i..0]:j
+     *          如果arr[j]<arr[j-1] （通过交换相邻的数，保证0..i上有序。不会破坏排序稳定性）
+     *              交换
+     *          否则:
+     *              break
+     * @param arr
+     */
     private static void insertSort2(int[] arr){
         if (arr == null | arr.length<2){
             return ;

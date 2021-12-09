@@ -12,6 +12,16 @@ public class Code02_PartitionAndQuickSort {
 
     /**
      * X为初始最右边的数,小于等于放左边,以X结尾,大于X的放右边.
+     *
+     * 定义pLess=L-1，表示小于区的右边界位置.
+     * 定义pCurr=L, 表示当前处理的位置。
+     * 循环（pCurr<R）
+     *      如果pCurr位置的数小于等于R位置的数
+     *          交换pCurr和pLess+1位置的数 （破坏了排序的稳定性）
+     *          pLess来到下一位置
+     *      pCurr来到下一位置
+     * 交换R和PLess+1位置的数, pLess来到下一位置
+     * 返回pLess
      * @return
      */
     private static int partion(int[] arr, int L, int R){
@@ -54,6 +64,22 @@ public class Code02_PartitionAndQuickSort {
 
     /**
      * 荷兰国旗2.0
+     * 将arr在L到R上，划分为三部分，左部分小于arr[R]，中间部分等于arr[R], 右部分大于arr[R]
+     * 要求返回等于区的左右边界位置。
+     * 定义pLess=L-1，表示小于区的边界位置
+     * 定义pGreater = R，表示大于区的边界位置（刚开始R位置数不参与排序）
+     * 定义pCurr=L，表示当前处理的位置
+     * 循环(pCurr < pGreater) (当前位置在大于区外)
+     *      如果arr[pCurr]小于arr[R]
+     *          交换pCurr和pLess+1位置的数
+     *          pCurr和pLess来到下一位置来到下一位置
+     *      如果arr[pCurr]等于arr[R]
+     *          pCurr来到下一位置
+     *      如果arr[pCurr]大于arr[R]
+     *          交换pCurr和pGreater-1位置的值
+     *          pGreatr来到左一位置
+     * 交换R和pGreater位置，
+     * 返回pless+1, pGreater
      * @param arr
      * @return
      */
@@ -71,7 +97,7 @@ public class Code02_PartitionAndQuickSort {
                 swap(arr, pCurr, --pGreater);
             }
         }
-        swap(arr, arr.length-1, pGreater);
+        swap(arr, R, pGreater);
 
         return new int[]{pLess+1, pGreater};
     }
