@@ -6,6 +6,7 @@ package com.zs.tixi.class12;
  * 2.
  *      二叉树可以通过先序，后序或按层遍历实现序列化和反序列化。请依次实现。
  * 3.    Leetcode 431.Encode N-ary Tree to Binary Tree
+ * 测试链接：https://leetcode.com/problems/encode-n-ary-tree-to-binary-tree
  *      请将一颗多叉树用二叉树表示，并可以还原回多叉树。
  * 4. 如何设计一个打印整颗树的打印函数。（将树结构打印成类似图像的形式）
  *
