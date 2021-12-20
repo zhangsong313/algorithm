@@ -20,6 +20,10 @@ public class MyCompValue {
         }
     }
 
+    public static void printUseTime(Runnable run){
+
+    }
+
     public static void times(int times, Runnable run){
         for (int i = 0; i < times; i++) {
             if (i%(times/10) == 0 ) System.out.println("已测试完成【"+i+"】次");
