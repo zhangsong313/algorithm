@@ -43,34 +43,35 @@ public class Code04_IsFull {
         return n(head.left) + n(head.right) + 1;
     }
 
-
     /**
-     * 如果head为空，返回true。
-     * 递归调用：左节点不满或右节点不满，返回false。
-     * 如果左树和右树只有一个为空：返回false。
-     * 如果左树和右树只有一个有非空子树，返回false。
-     *
-     * 返回true。
      * @param head
      * @return
      */
     public static boolean isFull2(Node head){
-        if (head == null) return true;
-        if (!isFull2(head.left) || !isFull2(head.right)) return false;
-        if (head.left==null ^ head.right == null ) return false;
-        if (hasChild(head.left) ^ hasChild(head.right) ) return false;
-        return true;
+        return process(head).isFull;
     }
 
     /**
-     * 判断当前二叉树是否有孩子.
+     * 如果左树为满二叉树，右树为满二叉树，且左树高度等于右树高度。则当前树为满二叉树。
      * @param head
      * @return
      */
-    private static boolean hasChild(Node head) {
-        if (head== null) return false;
-        if (head.left != null || head.right!=null) return true;
-        return false;
+    public static Info process(Node head){
+        if (head == null) return new Info(true, 0);
+        Info leftInfo = process(head.left);
+        Info rightInfo = process(head.right);
+        boolean isFull = leftInfo.isFull && rightInfo.isFull && leftInfo.height == rightInfo.height;
+        int height = Math.max(leftInfo.height, rightInfo.height)+1;
+        return new Info(isFull, height);
+    }
+
+    public static class Info {
+        public boolean isFull;
+        public int height;
+        public Info(boolean isFull, int height){
+            this.isFull = isFull;
+            this.height = height;
+        }
     }
 
     // for test
