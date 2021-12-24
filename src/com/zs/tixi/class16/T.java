@@ -14,6 +14,10 @@ package com.zs.tixi.class16;
  *      返回matrix中岛的数量。
  * 3. 岛问题扩展
  *      Leetcode 305.Number of Island Ⅱ
+ *      给定一个m*n列大小的空间area，都是0.此时岛数量为0.
+ *      给定一个二维数组positions, 里面的每个一维数组只有两位，(x,y)表示对应的area位置设置为1
+ *      最后返回n次设置岛屿后，每次岛数量集合。
+ *
  * 4. 岛问题扩展
  *      如果matrix极大，设计一种并行计算方案。
  */
