@@ -1,5 +1,8 @@
 package com.zs.tixi.class16;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * 1. Leetcode 547. Number of Provinces
  *      有n个城市，部分城市之间是连通的。
@@ -15,6 +18,7 @@ public class Code01_FriendCircles {
      * @return
      */
     public static int findCircleNum(int[][] M) {
+        List<Integer> list = new ArrayList<>();
         UnionFind unionFind = new UnionFind(M.length);
         for (int i = 0; i < M.length; i++) {
             for (int j = i+1; j < M[i].length; j++) {
