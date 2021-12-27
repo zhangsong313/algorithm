@@ -1,8 +1,9 @@
 package com.zs.tixi.class15;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 
 /*
  * 5. 并查集
@@ -27,84 +28,66 @@ import java.util.Stack;
  *      常用在图等领域中.
  */
 public class Code05_UnionFind {
-    private static class Node<V> {
-        V value;
-        public Node(V v) {
-            value = v;
+    private static class UnionFind<V>{
+        private Map<V, V> parents; // 当前对象到父对象
+        private Map<V, Integer> size; // 当前代表对象所属集合大小
+        public UnionFind(){
+            parents = new HashMap<>();
+            size = new HashMap<>();
         }
-    }
-
-    public static class UnionFind<V> {
-        private HashMap<V, Node<V>> nodes = new HashMap<>(); // 根据给定值找到对应节点。
-        private HashMap<Node<V>, Node<V>> parents = new HashMap<>(); // 找到指定节点的父节点。
-        private HashMap<Node<V>, Integer> sizeMap = new HashMap<>(); // 代表节点对应的集合大小。
 
         /**
-         * 初始化并查集时，提供所有值列表。
-         * @param values
+         * 加入并查集
          */
-        public UnionFind(List<V> values) {
-            for(V v : values){
-                Node<V> n = new Node<>(v);
-                nodes.put(v, n);
-                parents.put(n, n);
-                sizeMap.put(n, 1);
+        public void add(V v){
+            parents.put(v, v);
+            size.put(v, 1);
+        }
+
+        /**
+         * 查询代表元素
+         */
+        public V findHead(V v){
+            List<V> help = new ArrayList<>();
+            while (v!=parents.get(v)){
+                help.add(v);
+                v = parents.get(v);
             }
-        }
-
-        /**
-         * 返回指定节点的代表节点。
-         * @param cur
-         * @return
-         */
-        private Node<V> findFather(Node<V> cur) {
-            Stack<Node> stack = new Stack<>();
-            while (cur!=parents.get(cur)){
-                stack.push(cur);
-                cur = parents.get(cur);
+            for (int i = 0; i < help.size(); i++) {
+                parents.put(help.get(i), v);
             }
-            while (!stack.isEmpty()){
-                parents.put(stack.pop(), cur);
-            }
-            return cur;
+            return v;
         }
 
         /**
-         * a和b是否在同一集合内
-         * @param a
-         * @param b
-         * @return
+         * 合并
          */
-        public boolean isSameSet(V a, V b) {
-            return findFather(nodes.get(a))==findFather(nodes.get(b));
-        }
-
-        /**
-         * 合并a和b所在的两个集合。
-         * @param a
-         * @param b
-         */
-        public void union(V a, V b) {
-            Node<V> aHead = findFather(nodes.get(a));
-            Node<V> bHead = findFather(nodes.get(b));
-            if (aHead!=bHead){
-                Integer aSize = sizeMap.get(aHead);
-                Integer bSize = sizeMap.get(bHead);
-                Node<V> small = aSize<bSize?aHead:bHead;
-                Node<V> big = small==aHead?bHead:aHead;
+        public void union(V v1, V v2){
+            V head1 = findHead(v1);
+            V head2 = findHead(v2);
+            if (head1!=head2){
+                Integer size1 = size.get(head1);
+                Integer size2 = size.get(head2);
+                V big = size1>=size2?head1:head2;
+                V small= big == head1?head2:head1;
                 parents.put(small, big);
-                sizeMap.remove(small);
-                sizeMap.put(big, aSize+bSize);
+                size.remove(small);
+                size.put(big, size1+size2);
             }
         }
 
         /**
-         * 并查集中有多少个集合。
-         * @return
+         * 查询两个元素是否是同一集合。
          */
-        public int sets() {
-            return sizeMap.size();
+        public boolean isSameSet(V v1, V v2){
+            return findHead(v1)==findHead(v2);
         }
 
+        /**
+         * 返回并查集集合数
+         */
+        public int sets(){
+            return size.size();
+        }
     }
 }

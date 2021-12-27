@@ -1,12 +1,6 @@
 package com.zs.tixi.class17;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /*
  * 最小生成树算法之Kruskal：
@@ -33,83 +27,87 @@ public class Code04_Kruskal {
      * @return
      */
     public static Set<Edge> kruskalMST(Graph graph) {
-//        UnionFind unionFind = new UnionFind();
-//        unionFind.makeSets(graph.nodes.values());
-//        // 从小的边到大的边，依次弹出，小根堆！
-//        PriorityQueue<Edge> priorityQueue = new PriorityQueue<>(new EdgeComparator());
-//        for (Edge edge : graph.edges) { // M 条边
-//            priorityQueue.add(edge);  // O(logM)
-//        }
-//        Set<Edge> result = new HashSet<>();
-//        while (!priorityQueue.isEmpty()) { // M 条边
-//            Edge edge = priorityQueue.poll(); // O(logM)
-//            if (!unionFind.isSameSet(edge.from, edge.to)) { // O(1)
-//                result.add(edge);
-//                unionFind.union(edge.from, edge.to);
-//            }
-//        }
-//        return result;
+        UnionFind<Node> unionFind = new UnionFind<>();
+        for (Node node : graph.nodes.values()) {
+            unionFind.add(node);
+        }
+        List<Edge> list = new ArrayList<>();
+        for (Edge edge : graph.edges) {
+            list.add(edge);
+        }
+        list.sort(new EdgeComparator());
+        Set<Edge> ans = new HashSet<>();
+        for (Edge edge : list) {
+            if(!unionFind.isSameSet(edge.from, edge.to)){
+                unionFind.union(edge.from, edge.to);
+                ans.add(edge);
+            }
+        }
+        return ans;
     }
 
-    // Union-Find Set
-    public static class UnionFind {
-        // key 某一个节点， value key节点往上的节点
-        private HashMap<Node, Node> fatherMap;
-        // key 某一个集合的代表节点, value key所在集合的节点个数
-        private HashMap<Node, Integer> sizeMap;
-
-        public UnionFind() {
-            fatherMap = new HashMap<Node, Node>();
-            sizeMap = new HashMap<Node, Integer>();
+    private static class UnionFind<V>{
+        private Map<V, V> parents; // 当前对象到父对象
+        private Map<V, Integer> size; // 当前代表对象所属集合大小
+        public UnionFind(){
+            parents = new HashMap<>();
+            size = new HashMap<>();
         }
 
-        public void makeSets(Collection<Node> nodes) {
-            fatherMap.clear();
-            sizeMap.clear();
-            for (Node node : nodes) {
-                fatherMap.put(node, node);
-                sizeMap.put(node, 1);
+        /**
+         * 加入并查集
+         */
+        public void add(V v){
+            parents.put(v, v);
+            size.put(v, 1);
+        }
+
+        /**
+         * 查询代表元素
+         */
+        public V findHead(V v){
+            List<V> help = new ArrayList<>();
+            while (v!=parents.get(v)){
+                help.add(v);
+                v = parents.get(v);
+            }
+            for (int i = 0; i < help.size(); i++) {
+                parents.put(help.get(i), v);
+            }
+            return v;
+        }
+
+        /**
+         * 合并
+         */
+        public void union(V v1, V v2){
+            V head1 = findHead(v1);
+            V head2 = findHead(v2);
+            if (head1!=head2){
+                Integer size1 = size.get(head1);
+                Integer size2 = size.get(head2);
+                V big = size1>=size2?head1:head2;
+                V small= big == head1?head2:head1;
+                parents.put(small, big);
+                size.remove(small);
+                size.put(big, size1+size2);
             }
         }
 
-        private Node findFather(Node n) {
-            Stack<Node> path = new Stack<>();
-            while(n != fatherMap.get(n)) {
-                path.add(n);
-                n = fatherMap.get(n);
-            }
-            while(!path.isEmpty()) {
-                fatherMap.put(path.pop(), n);
-            }
-            return n;
+        /**
+         * 查询两个元素是否是同一集合。
+         */
+        public boolean isSameSet(V v1, V v2){
+            return findHead(v1)==findHead(v2);
         }
 
-        public boolean isSameSet(Node a, Node b) {
-            return findFather(a) == findFather(b);
-        }
-
-        public void union(Node a, Node b) {
-            if (a == null || b == null) {
-                return;
-            }
-            Node aDai = findFather(a);
-            Node bDai = findFather(b);
-            if (aDai != bDai) {
-                int aSetSize = sizeMap.get(aDai);
-                int bSetSize = sizeMap.get(bDai);
-                if (aSetSize <= bSetSize) {
-                    fatherMap.put(aDai, bDai);
-                    sizeMap.put(bDai, aSetSize + bSetSize);
-                    sizeMap.remove(aDai);
-                } else {
-                    fatherMap.put(bDai, aDai);
-                    sizeMap.put(aDai, aSetSize + bSetSize);
-                    sizeMap.remove(bDai);
-                }
-            }
+        /**
+         * 返回并查集集合数
+         */
+        public int sets(){
+            return size.size();
         }
     }
-
 
     public static class EdgeComparator implements Comparator<Edge> {
 
