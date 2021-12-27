@@ -21,7 +21,10 @@ public class MyCompValue {
     }
 
     public static void printUseTime(Runnable run){
-
+        long start = System.currentTimeMillis();
+        run.run();
+        long end = System.currentTimeMillis();
+        System.out.println(end-start + "ms");
     }
 
     public static void times(int times, Runnable run){
