@@ -2,13 +2,13 @@ package com.zs.tixi.class18;
 
 import com.zs.xiaobai.common.MyCompValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /*
  *      2. 打印一个字符串的全部子序列。
  *      3. 打印一个字符串的全部子序列，要求不要出现重复字面值的子序列。
+ *
+ * 思路：对每个位置考虑要和不要，考虑到最后一个位置就收集了全部可能。
  */
 public class Code03_PrintAllSubsquences {
 
@@ -40,18 +40,18 @@ public class Code03_PrintAllSubsquences {
 
     public static void main(String[] args) {
         String str = "";
-        for (int i = 0; i < 18; i++) {
+        for (int i = 0; i < 6; i++) {
             char c = (char)('a'+Math.random()*('z'+1-'a'));
             str+=c;
         }
         System.out.println("str : "+str);
         String finalStr = str;
         MyCompValue.printUseTime(()->{
-            subs(finalStr);
+            System.out.println(subsNoRepeat(finalStr));
         });
 
         MyCompValue.printUseTime(()->{
-            subs1(finalStr);
+            System.out.println(subsNoRepeat2(finalStr));
         });
 
     }
@@ -87,6 +87,68 @@ public class Code03_PrintAllSubsquences {
         process1(str, index + 1, ans, path + String.valueOf(str[index]));
     }
 
+
+    /**
+     * 打印全部子序列，不包括重复的子序列。
+     * @param s
+     * @return
+     */
+    public static List<String> subsNoRepeat(String s) {
+        char[] str = s.toCharArray();
+        Set<String> ans = new HashSet<>();
+        process3(str, 0, "", ans);
+        List<String> ansList = new ArrayList<>();
+        for (String an : ans) {
+            ansList.add(an);
+        }
+        return ansList;
+    }
+
+    /**
+     * str为给定字符串，固定参数
+     * 当前来到i位置。
+     * 之前选择的子序列结果为s
+     * ans为收集答案的集合，固定参数。
+     *
+     * 如果当前来到str长度位置，把之前的结果s加入集合ans。返回
+     * 不选择当前字符：递归调用下一位置，s不变。
+     * 选择当前字符：递归调用下一位置，s累加上当前位置字符。
+     * @param str
+     * @param i
+     * @param s
+     * @param ans
+     */
+    private static void process3(char[] str, int i, String s, Set<String> ans) {
+        if(i==str.length){
+            ans.add(s);
+            return;
+        }
+        process3(str, i+1, s, ans);
+        process3(str, i+1, s+str[i], ans);
+    }
+
+    public static List<String> subsNoRepeat2(String s) {
+        char[] str = s.toCharArray();
+        String path = "";
+        HashSet<String> set = new HashSet<>();
+        process4(str, 0, set, path);
+        List<String> ans = new ArrayList<>();
+        for (String cur : set) {
+            ans.add(cur);
+        }
+        return ans;
+    }
+
+    public static void process4(char[] str, int index, HashSet<String> set, String path) {
+        if (index == str.length) {
+            set.add(path);
+            return;
+        }
+        String no = path;
+        process4(str, index + 1, set, no);
+        String yes = path + String.valueOf(str[index]);
+        process4(str, index + 1, set, yes);
+    }
 
 
 }
