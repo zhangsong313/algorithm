@@ -1,5 +1,9 @@
 package com.zs.tixi.class20;
 
+import com.zs.xiaobai.common.MyCompValue;
+
+import java.util.function.Function;
+
 /**
  * 动态规划
  *
@@ -23,12 +27,55 @@ package com.zs.tixi.class20;
  *      例如：str='babac', arr={"ba", "c", "abcd"}
  *      ba+ba+c 3 abcd+abcd 2 abcd+ba 2
  *      所以返回2
+ *      本题测试链接：https://leetcode.com/problems/stickers-to-spell-word
  *
  * 题目四：
  *      给定两个字符串str1和str2
  *      返回这两个字符串的最长公共子序列
  *      比如：str1="a12b3c456d", str2="1ef23ghi4j56k"
  *      最长公共子序列是"123456"，所以返回长度6.
+ *       这个问题leetcode上可以直接测
+ *  链接：https://leetcode.com/problems/longest-common-subsequence/
  */
 public class T {
+    public static void main(String[] args) {
+        testSnapsack(1000, 10, 10, T::knapsack0Fun, T::knapsack1Fun);
+    }
+    public static int knapsack0Fun(SnapsackParam param){
+        return Code01_Knapsack.knapsack0(param.w, param.v, param.bag);
+    }
+    public static int knapsack1Fun(SnapsackParam param){
+        return Code01_Knapsack.knapsack1(param.w, param.v, param.bag);
+    }
+
+    /**
+     * 测试背包问题：两个解法对比测试.
+     */
+    public static void testSnapsack(int times, int maxArrLength, int maxBag, Function<SnapsackParam, Integer> fun1, Function<SnapsackParam, Integer> fun2){
+        MyCompValue.times(times, ()->{
+            int bag = (int)(Math.random()*maxBag)+1;
+            int l = (int)(Math.random()*maxArrLength)+1;
+            int[] w = MyCompValue.randomValueArr(l, bag*2);
+            int[] v = MyCompValue.randomValueArr(l, bag*2);
+            Integer ans1 = fun1.apply(new SnapsackParam(w, v, bag));
+            Integer ans2 = fun2.apply(new SnapsackParam(w, v, bag));
+            if(!ans1.equals(ans2)){
+                MyCompValue.printArr(w);
+                MyCompValue.printArr(v);
+                System.out.println(bag);
+                MyCompValue.printErr("ans1 : ", ans1, "ans2 : ", ans2);
+            }
+        });
+    }
+
+    private static class SnapsackParam{
+        public int[] w;
+        public int[] v;
+        public int bag;
+        public SnapsackParam(int[] w, int[] v, int bag){
+            this.w = w;
+            this.v = v;
+            this.bag = bag;
+        }
+    }
 }

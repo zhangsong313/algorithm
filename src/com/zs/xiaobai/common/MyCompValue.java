@@ -35,6 +35,15 @@ public class MyCompValue {
         System.out.println("已测试完成【"+times+"】次");
     }
 
+    public static int[] randomValueArr(int length, int maxValue){
+        int l = length;
+        int[] arr = new int[l];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (int)(Math.random()*(maxValue+1));
+        }
+        return arr;
+    }
+
     public static int[] randomIntArr(int maxLength, int maxValue){
         int l = (int)(Math.random()*(maxLength+1));
         int[] arr = new int[l];
