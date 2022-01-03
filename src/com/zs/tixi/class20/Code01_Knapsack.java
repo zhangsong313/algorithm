@@ -19,6 +19,16 @@ public class Code01_Knapsack {
      * 将重量数组weights和values的每个值对应整合成物品Goods对象
      * 将Goods放入列表进行排序，比较器：价值大的在前，同价值下重量轻的在前。
      * 遍历列表：保证放入物品重量不超过载重。
+     *
+     * 新思路:
+     *      比较器:性价比(价格/重量)高的在前.
+     *      遇到放不下的情况,尝试将背包中最后放入的对象取出.直到背包可以放下当前对象.
+     *      比较当前对象与取出所有对象的价值
+     *      如果当前对象价值小,返回本次尝试之前的价值.
+     *      如果当前对象价值大:将当前对象放入背包,继续.
+     * 还是错误
+     *
+     *
      */
     public static int knapsack0(int[] weights, int[] values, int bag){
         if(weights==null||weights.length==0) return 0;
@@ -28,15 +38,45 @@ public class Code01_Knapsack {
             goodsList.add(new Goods(weights[i], values[i]));
         }
 
-        goodsList.sort(new GoodsComparator());
+        GoodsComparator goodsComparator = new GoodsComparator();
+        goodsList.sort(goodsComparator);
         System.out.println("sorted goods : "+goodsList);
         int ans = 0;
+        GoodsComparator2 goodsComparator2 = new GoodsComparator2();
+        List<Goods> selectedGoods = new ArrayList<>();
         for (int i = 0; i < goodsList.size(); i++) {
+
+//            Goods poll = goodsList.get(i);
+//            if(bag-poll.weight<0) continue;
+//            ans+=poll.value;
+//            bag-=poll.weight;
+//            System.out.println(poll);
+
             Goods poll = goodsList.get(i);
-            if(bag-poll.weight<0) continue;
+            if(bag-poll.weight<0) { // 背包放不下了.
+                int bag2 = bag;
+                int ans2 = ans;
+                List<Goods> pollList = new ArrayList<>();
+                selectedGoods.sort(goodsComparator2);
+                for (int j = 0; bag2-poll.weight<0 && j <selectedGoods.size(); j++) {// 取出一直到背包可以放下当前物品或为空.
+                    bag2+=selectedGoods.get(j).weight;
+                    ans2-=selectedGoods.get(j).value;
+                    pollList.add(selectedGoods.get(j));
+                }
+                if (bag2-poll.weight<0) continue;
+                if ((ans-ans2)<poll.value){ // 如果取出的物品价值小于当前物品,真的取出这些物品
+                    bag=bag2;
+                    ans=ans2;
+                    for (int j = 0; j < pollList.size(); j++) {
+                        selectedGoods.remove(pollList.get(j));
+                    }
+                } else {
+                    continue;
+                }
+            }
             ans+=poll.value;
             bag-=poll.weight;
-            System.out.println(poll);
+            selectedGoods.add(poll);
         }
         return ans;
     }
@@ -71,6 +111,14 @@ public class Code01_Knapsack {
             double ans = ((double)o2.value/(double)o2.weight)-((double)o1.value/(double)o1.weight);
             return ans>0?1:ans<0?-1:0;
 //            return o1.value!=o2.value?o2.value-o1.value:o1.weight-o2.weight;
+        }
+    }
+
+    private static class GoodsComparator2 implements Comparator<Goods>{ // 优先取重量小的,相同重量取价值小的.
+
+        @Override
+        public int compare(Goods o1, Goods o2) {
+            return o1.weight==o2.weight?o1.value-o2.value:o1.weight-o2.weight;
         }
     }
 
@@ -177,17 +225,17 @@ public class Code01_Knapsack {
 
     public static void main(String[] args) {
         int max = 10;
-        int bag = (int)(Math.random()*max);
+//        int bag = (int)(Math.random()*max);
         int num = (int)(Math.random()*max);
-        int[] weights = new int[num];
-        int[] values = new int[num];
-        for (int i = 0; i < num; i++) {
-            weights[i] = (int)(Math.random()*max);
-            values[i] = (int)(Math.random()*max);
-        }
-//        int[] weights = { 3, 2, 4, 7, 3, 1, 7 };
-//        int[] values = { 5, 6, 3, 19, 12, 4, 2 };
-//        int bag = 15;
+//        int[] weights = new int[num];
+//        int[] values = new int[num];
+//        for (int i = 0; i < num; i++) {
+//            weights[i] = (int)(Math.random()*max);
+//            values[i] = (int)(Math.random()*max);
+//        }
+        int[] weights = { 14, 4, 11, 2, 6, 5 };
+        int[] values = { 7, 11, 14, 6, 6, 7 };
+        int bag = 15;
         System.out.println(knapsack0(weights, values, bag));
         System.out.println(knapsack1(weights, values, bag));
         System.out.println(knapsack2(weights, values, bag));

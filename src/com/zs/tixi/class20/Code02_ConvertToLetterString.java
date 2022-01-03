@@ -20,8 +20,8 @@ public class Code02_ConvertToLetterString {
      * 当前来到i位置。请返回i位置往后有多少种转化结果。
      * 如果当前来到末尾位置，返回1.表示之前的转化成功。
      * 如果i位置数为0，返回0，表示之前的转化错误。
-     * 尝试i位置单独翻译，递归调用：i+1 .如果结果不为-1，收集结果数。
-     * 如果i位置小于3，且i+1位置小于7,尝试i和i+1位置合并翻译，递归调用:i+2，如果结果不为-1，收集结果数。
+     * 尝试i位置单独翻译，递归调用：i+1 .收集结果数。
+     * 如果i位置和i+1位置合并后的数值在1-26之间,尝试i和i+1位置合并翻译，递归调用:i+2，如果结果不为-1，收集结果数。
      * 返回收集的结果数。
      */
     public static int process1(char[] str, int i){
@@ -67,12 +67,36 @@ public class Code02_ConvertToLetterString {
     /**
      * 考虑递归行为这样定义：
      * 当前来到i位置，
-     * 请返回0..i范围上有多少中转换结果
+     * 请返回0..i范围上有多少种转换结果
      *
      * 0..i-1已经有转换结果了。
+     * 尝试将i位置单独翻译,如果当前位置是'0',有0种转换结果,否则,递归调用:i-1.
+     * 尝试将i位置和i+1位置合并翻译,要求i-1位置和i位置合并后的数字在1-26之间,递归调用:i-2.
+     * 返回上面两种尝试结果之和.
+     *
+     * 分析上述递归行为:
+     * i位置的值依赖i-1位置和i-2位置的值.
      */
    public static int dp2(String str){
+       if(str == null || str.length()==0) return 0;
+       char[] chars = str.toCharArray();
+       int N = chars.length;
+       int[] dp = new int[N];
+       if(chars[0]!='0') dp[0] = 1;
+       for (int i = 1; i < N; i++) {
+           if(chars[i]!='0'){
+               dp[i]+=dp[i-1];
+           }
+           if(i>0 && chars[i-1]!='0' && (chars[i-1]-'0')*10+(chars[i]-'0') <27){
+               if(i==1){
+                   dp[i]+=1;
+               } else{
+                   dp[i]+=dp[i-2];
+               }
 
+           }
+       }
+       return dp[N-1];
    }
 
     // 为了测试
@@ -94,10 +118,11 @@ public class Code02_ConvertToLetterString {
             String s = randomString(len);
             int ans0 = dp1(s);
             int ans1 = convertToLetterString(s);
-            if (ans0 != ans1) {
+            int ans2 = dp2(s);
+            if (ans0 != ans2) {
                 System.out.println(s);
                 System.out.println(ans0);
-                System.out.println(ans1);
+                System.out.println(ans2);
                 System.out.println("Oops!");
                 break;
             }
