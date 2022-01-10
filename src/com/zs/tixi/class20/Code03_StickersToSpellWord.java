@@ -43,7 +43,7 @@ public class Code03_StickersToSpellWord {
 
         int p1 = process0(arr, rest, i+1);
 
-        List<Character> rest2 = new ArrayList<>();
+        List<Character> rest2 = new ArrayList<>(rest.size());
         Collections.copy(rest2, rest);// 恢复现场.(不破坏现场)
         for (char aChar : chars) {
             if (rest2.contains(aChar)) rest2.remove(new Character(aChar));
