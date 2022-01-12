@@ -13,6 +13,7 @@ public class Code01_MinPathSum {
      * @return
      */
     public static int minPathSum1(int[][] m) {
+        if(m==null || m.length==0 || m[0] ==null || m[0].length==0) return 0;
         return process1(0, 0, m);
     }
 
@@ -71,25 +72,29 @@ public class Code01_MinPathSum {
         return dp[0][0];
     }
 
-
     public static int minPathSum2(int[][] m) {
-        if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
-            return 0;
-        }
-        int row = m.length;
-        int col = m[0].length;
-        int[] dp = new int[col];
-        dp[0] = m[0][0];
-        for (int j = 1; j < col; j++) {
-            dp[j] = dp[j - 1] + m[0][j];
-        }
-        for (int i = 1; i < row; i++) {
-            dp[0] += m[i][0];
-            for (int j = 1; j < col; j++) {
-                dp[j] = Math.min(dp[j - 1], dp[j]) + m[i][j];
-            }
-        }
-        return dp[col - 1];
+        if(m==null || m.length==0 || m[0] ==null || m[0].length==0) return 0;
+        int M = m.length;
+        int N = m[0].length;
+        return process2( M-1, N-1, m);
+    }
+
+    /**
+     * 当前来到(i, j)位置,请返回(0, 0)位置到当前位置的最小距离.
+     *
+     * 如果当前位置是(0, 0) 直接返回m[0][0]
+     * 如果当前位置越界,返回整型最大值
+     * 尝试从上方来到当前位置:递归调用:(i-1, j, m)
+     * 尝试从左方来到当前位置:递归调用:(i, j-1, m)
+     *
+     * 返回上面两种尝试结果的较小值加上m[i][j]
+     */
+    private static int process2(int i, int j, int[][] m) {
+        if (i==0 && j==0) return m[0][0];
+        if (i<0 || j<0) return Integer.MAX_VALUE;
+        int p1 = process2(i-1, j, m);
+        int p2 = process2(i, j-1, m);
+        return Math.min(p1, p2)+m[i][j];
     }
 
     // for test
@@ -122,6 +127,7 @@ public class Code01_MinPathSum {
         int[][] m = generateRandomMatrix(rowSize, colSize);
         System.out.println(minPathSum1(m));
         System.out.println(dp1(m));
+        System.out.println(minPathSum2(m));
 
     }
 }
