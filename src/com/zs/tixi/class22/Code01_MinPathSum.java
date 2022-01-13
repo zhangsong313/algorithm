@@ -97,6 +97,75 @@ public class Code01_MinPathSum {
         return Math.min(p1, p2)+m[i][j];
     }
 
+    /**
+     * 动态规划表
+     * 根据minPathSum2递归可以看出(i, j)位置依赖（i-1， j）和(i, j-1)位置
+     *
+     * m的大小：M*N
+     * 创建二位数组dp[M][N]
+     * dp[0][0]=m[0][0]
+     * 先填第一行和第一列，防止递推时越界
+     * 第一行：每个位置的值都是前一个位置值加上m[0][j]位置的值
+     * 第一列：每个位置的值都是上一个位置的值加上m[i][0]位置的值
+     * (i, j)位置的值：(i-1, j)和(j-1, i)中较小值加上m[i][j]
+     *
+     * 返回dp[M-1][N-1]
+     */
+    public static int dp2(int[][] m){
+        if(m==null || m.length==0 || m[0] ==null || m[0].length==0) return 0;
+        int M = m.length;
+        int N = m[0].length;
+        int[][] dp = new int[M][N];
+        dp[0][0] = m[0][0];
+        for (int i = 1; i < N; i++) {
+            dp[0][i] = dp[0][i-1] +m[0][i];
+        }
+//        for (int i = 1; i < M; i++) {
+//            dp[i][0] = dp[i-1][0] + m[i][0];
+//        }
+        for (int i = 1; i < M; i++) {
+            dp[i][0] = dp[i-1][0] + m[i][0]; // 在行开头填写，代码少写个循环，但执行时间完全相同。
+            for (int j = 1; j < N; j++) {
+                dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1])+m[i][j];
+            }
+        }
+
+        return dp[M-1][N-1];
+    }
+
+    /**
+     * 对dp2进行数组压缩，优化空间。
+     * 由于(i, j)位置只依赖左边位置和上边位置，所以除了当前行（当前位置左边）和上一行(当前位置右边)数据外，其他行的空间都浪费了。
+     *
+     * m大小为M*N
+     * 创建一维数组dp[N], （此处可以选M还是选N作为dp的大小，可以根据M和N哪个大，如果行数少，就从左到右按列填，如果列少就从上到下按行填。)
+     * dp[0]=m[0][0]
+     * 先填第0行，dp[i] = dp[i-1]+m[0][i]
+     *
+     * 从第1行开始填起，
+     * dp[0]填dp[0]+m[i][0]的值
+     * 后面的dp[j]: dp[j-1]和dp[j]较小值加上m[i][j]
+     *
+     * 返回dp[N-1]
+     */
+    public static int dp3(int[][] m) {
+        if(m==null || m.length==0 || m[0] ==null || m[0].length==0) return 0;
+        int M = m.length;
+        int N = m[0].length;
+        int[] dp  = new int[N];
+        dp[0] = m[0][0];
+        for (int i = 1; i < N; i++) {
+            dp[i] = dp[i-1]+m[0][i];
+        }
+        for (int i = 1; i < M; i++) {
+            dp[0] += m[i][0];
+            for (int j = 1; j < N; j++) {
+                dp[j] = Math.min(dp[j-1], dp[j])+m[i][j];
+            }
+        }
+        return dp[N-1];
+    }
+
     // for test
     public static int[][] generateRandomMatrix(int rowSize, int colSize) {
         if (rowSize < 0 || colSize < 0) {
@@ -128,6 +197,8 @@ public class Code01_MinPathSum {
         System.out.println(minPathSum1(m));
         System.out.println(dp1(m));
         System.out.println(minPathSum2(m));
+        System.out.println(dp2(m));
+        System.out.println(dp3(m));
 
     }
 }
