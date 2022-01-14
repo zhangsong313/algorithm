@@ -54,29 +54,21 @@ public class Code01_KillMonster {
      */
     public static double dp1(int N, int M, int K) {
         int[][] dp = new int[K+1][N+1];
-        
-    }
-
-    public static double dp2(int N, int M, int K) {
-        if (N < 1 || M < 1 || K < 1) {
-            return 0;
+        for (int i = 1; i <= N; i++) {
+            dp[0][i] = 1;
         }
-        long all = (long) Math.pow(M + 1, K);
-        long[][] dp = new long[K + 1][N + 1];
-        dp[0][0] = 1;
-        for (int times = 1; times <= K; times++) {
-            dp[times][0] = (long) Math.pow(M + 1, times);
-            for (int hp = 1; hp <= N; hp++) {
-                dp[times][hp] = dp[times][hp - 1] + dp[times - 1][hp];
-                if (hp - 1 - M >= 0) {
-                    dp[times][hp] -= dp[times - 1][hp - 1 - M];
+        for (int rest = 1; rest <= K; rest++) {
+            for (int hp = 0; hp <= N; hp++) {
+                if (hp - M - 1 >= 0) {
+                    dp[rest][hp] = dp[rest][hp - 1] + dp[rest - 1][hp] + dp[rest - 1][hp - M - 1];
+                } else if (hp - 1 >= 0) {
+                    dp[rest][hp] = dp[rest][hp - 1] + dp[rest - 1][hp];
                 } else {
-                    dp[times][hp] -= Math.pow(M + 1, times - 1);
+                    dp[rest][hp] = dp[rest - 1][hp];
                 }
             }
         }
-        long kill = dp[K][N];
-        return (double) ((double) kill / (double) all);
+        return dp[K][N];
     }
 
     public static void main(String[] args) {
@@ -91,12 +83,14 @@ public class Code01_KillMonster {
             int K = (int) (Math.random() * KMax);
             double ans1 = right(N, M, K);
             double ans2 = dp1(N, M, K);
-            double ans3 = dp2(N, M, K);
-            if (ans1 - ans2 >0.0000001|| ans1 - ans3>0.0000001) {
+//            double ans3 = dp2(N, M, K);
+            if (ans1 - ans2 >0.0000001
+//                    || ans1 - ans3>0.0000001
+            ) {
                 System.out.println("Oops!");
                 System.out.println(ans1);
                 System.out.println(ans2);
-                System.out.println(ans3);
+//                System.out.println(ans3);
                 break;
             }
         }

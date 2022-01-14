@@ -96,15 +96,31 @@ public class Code03_Coffee {
      *
      * 创建一个二维数组dp[N+1][readyMax+1]
      * i位置的值依赖i+1位置的值。
-     *
+     * 第N行的值都是0
+     * 从第N-1行填到第0行.
+     * (i, ready)位置依赖(i+1, ready+a)和(i+1, ready)的值
+     * 返回dp[0][0]
      */
     public static int coffee2(int[] arr, int n, int a, int b){
-        return 0;
+
+        int[] timeArr = getTimeArr(arr, n);
+
+        int readyMax = 0;
+        for (int i = 0; i<timeArr.length; i++) {
+            readyMax = Math.max(readyMax, timeArr[i])+a;
+        }
+        int[][] dp = new int[n+1][readyMax+1];
+        for (int i = n-1; i >=0; i--) {
+            for (int ready = 0; ready <= readyMax; ready++) {
+                int washTime = Math.max(ready, timeArr[i]);
+                if (washTime+a>readyMax) break;
+                int p1 = Math.max(dp[i+1][washTime+a], washTime+a);
+                int p2 = Math.max(dp[i+1][ready], timeArr[i]+b);
+                dp[i][ready] = Math.min(p1, p2);
+            }
+        }
+        return dp[0][0];
     }
-
-
-
-
 
     // for test
     public static int[] randomArray(int len, int max) {
@@ -180,18 +196,18 @@ public class Code03_Coffee {
             int b = (int) (Math.random() * 10) + 1;
             int ans1 = right(arr, n, a, b);
             int ans2 = coffee(arr, n, a, b);
-            if (ans1 != ans2 ) {
+            int ans3 = coffee2(arr, n, a, b);
+            if (ans1 != ans2
+            || ans1!=ans3) {
                 printArray(arr);
                 System.out.println("n : " + n);
                 System.out.println("a : " + a);
                 System.out.println("b : " + b);
-                System.out.println(ans1 + " , " + ans2);
+                System.out.println(ans1 + " , " + ans2+", "+ans3);
                 System.out.println("===============");
                 break;
             }
         }
         System.out.println("测试结束");
-
     }
-
 }
