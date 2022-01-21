@@ -19,14 +19,17 @@ package com.zs.tixi.class26;
  *
  * 题目三:
  *      给定一个非负数组arr,代表直方图,返回直方图的最大长方形面积.
+ *      https://leetcode.com/problems/largest-rectangle-in-histogram
  *
  * 题目四:
  *      给定一个二维数组matrix,其中的值不是0就是1,
  *      返回全部由1组成的最大子矩形,内部有多少个1.
+ *      测试链接：https://leetcode.com/problems/maximal-rectangle/
  *
  * 题目五:
  *      给定一个二维数组matrix,其中的值不是0就是1.
  *      返回全部由1组成的子矩形数量.
+ *      测试链接：https://leetcode.com/problems/count-submatrices-with-all-ones
  */
 public class T {
 }
