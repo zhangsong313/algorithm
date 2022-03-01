@@ -1,9 +1,11 @@
 package com.zs.tixi.class33;
 
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
 
 /*
  * AC自动机
@@ -11,7 +13,7 @@ import java.util.Queue;
  *      (大文章内找敏感词.)
  *
  * AC自动机算法核心:
- *      1)把所有匹配穿生成一颗前缀树
+ *      1)把所有匹配串生成一颗前缀树
  *      2)前缀树节点增加fail指针
  *      3)fail指针的含义:如果必须以当前字符结尾.当前形成的路径是str,剩下的哪一个字符串的前缀和str的后缀,
  *      拥有最大的匹配长度.fail指针就指向哪个字符串的最后一个字符所对应的节点.
@@ -55,7 +57,7 @@ public class Code03_AC1 {
          *      定义变量cur为root.
          *      遍历s的字符数组:c
          *          定义next变量通过下标换算得到当前字符的nexts下标:c-'a'
-         *          如果已经有当前路径:cur.nexts[next]!=null
+         *          如果没有当前路径:cur.nexts[next]==null
          *              创建改路径的后续节点.
          *          cur来到下一节点.
          *      cur.end设置为s.
@@ -68,10 +70,10 @@ public class Code03_AC1 {
          *      定义变量cur指向poll.
          *      循环i:0..25
          *          如果i路径有后续节点:
+         *              cur的i路径节点的fail指针暂时设置为root.
          *              定义变量cf指向cur.fail
-         *              cur的i路径节点的fail指针设置为root.
          *              循环:cf不为空
-         *                  如果cf.的i路径有后续节点.
+         *                  如果cf.的i路径有后续节点.（父节点的fail指针找到的位置有i路径）
          *                      设置cur的i路径节点的fail指针为cf的i路径节点.
          *                      退出循环.
          *                  cf来到cf的fail指针位置
@@ -94,19 +96,19 @@ public class Code03_AC1 {
             Queue<Node> queue = new LinkedList<>();
             queue.add(root);
             while (!queue.isEmpty()){
-                Node cur = queue.poll();
+                Node poll = queue.poll();
                 for (int i = 0; i < 26; i++) {
-                    if (cur.nexts[i] != null){
-                        Node cfail = cur.fail;
-                        cur.nexts[i].fail = root;
+                    if(poll.nexts[i]!=null){
+                        poll.nexts[i].fail = root;
+                        Node cfail = poll.fail;
                         while (cfail!=null){
                             if(cfail.nexts[i]!=null){
-                                cur.nexts[i].fail = cfail.nexts[i];
+                                poll.nexts[i].fail = cfail.nexts[i];
                                 break;
                             }
                             cfail = cfail.fail;
                         }
-                        queue.add(cur.nexts[i]);
+                        queue.add(poll.nexts[i]);
                     }
                 }
             }

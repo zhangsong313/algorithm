@@ -289,6 +289,7 @@ public class Code01_SizeBalancedTreeMap {
                 }
             }
             // ?????????????为什么删除完以后不需要重新尝试调整平衡呢？
+            // 删除后不调整平衡性，性能是曾经达到最大数据的logN水平，仍然很低。直到重新加一次数据后重新调平。
             return cur;
         }
 
@@ -376,7 +377,8 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public K getIndexKey(int index) {
-
+            if(index<0 || index>=size()) return null;
+            return getIndex(root, index + 1).key;
         }
 
         /**
@@ -385,7 +387,8 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public V getIndexValue(int index) {
-
+            if(index<0 || index>=size()) throw new RuntimeException("下标越界");
+            return getIndex(root, index + 1).value;
         }
 
         /**
@@ -394,7 +397,12 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public V get(K key) {
-
+            if (key == null) throw new RuntimeException("参数为空");
+            SBTNode<K, V> lastIndex = findLastIndex(key);
+            if(lastIndex!=null && key.compareTo(lastIndex.key)==0){
+                return lastIndex.value;
+            }
+            return null;
         }
 
         /**
@@ -402,7 +410,12 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public K firstKey() {
-
+            if(root==null) return null;
+            SBTNode<K, V> cur = root;
+            while (cur.l!=null){
+                cur = cur.l;
+            }
+            return cur.key;
         }
 
         /**
@@ -410,7 +423,12 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public K lastKey() {
-
+            if (root==null) return null;
+            SBTNode<K, V> cur = root;
+            while (cur.r!=null){
+                cur = cur.r;
+            }
+            return cur.key;
         }
 
         /**
@@ -419,7 +437,9 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public K floorKey(K key) {
-
+            if(key==null) throw new RuntimeException("参数为空");
+            SBTNode<K, V> lastNoBigIndex = findLastNoBigIndex(key);
+            return lastNoBigIndex==null?null:lastNoBigIndex.key;
         }
 
         /**
@@ -428,7 +448,9 @@ public class Code01_SizeBalancedTreeMap {
          * @return
          */
         public K ceilingKey(K key) {
-
+            if(key==null) throw new RuntimeException("param is null");
+            SBTNode<K, V> lastNoSmallIndex = findLastNoSmallIndex(key);
+            return lastNoSmallIndex == null ? null : lastNoSmallIndex.key;
         }
     }
 }

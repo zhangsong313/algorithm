@@ -35,7 +35,7 @@ public class Code01_CountOfRangSum {
         if(L==R){
             return sum[L]>= lower && sum[L]<= upper ? 1 : 0;
         }
-        int M = L +((R-L)>>1);
+        int M = L +(R-L>>1);
         return process(sum, L, M, lower, upper)+
                 process(sum, M+1, R, lower, upper)+
                 merge(sum, L, M, R, lower, upper);
