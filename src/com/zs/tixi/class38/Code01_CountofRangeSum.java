@@ -1,7 +1,5 @@
 package com.zs.tixi.class38;
 
-import com.zs.tixi.class37.Code01_SizeBalancedTreeMap;
-
 /*
  * 1.给定一个数组arr,两个整数lower和upper,返回arr中有多少个子数组累加在[lower,upper]范围上.
  * // 这道题直接在leetcode测评：
@@ -106,9 +104,16 @@ public class Code01_CountofRangeSum {
      */
     public static int countRangeSum2(int[] nums, int lower, int upper){
         if(nums == null || nums.length==0) return 0;
-        for (int i = 0; i < nums.length; i++) {
-
+        long sum = 0;
+        int ans = 0;
+        SBTreeMap treeMap = new SBTreeMap();
+        treeMap.add(0);
+        for (int i = 0;  i < nums.length; i++) {
+            sum+=nums[i];
+            ans += treeMap.range(sum-upper, sum-lower);
+            treeMap.add(sum);
         }
+        return ans;
     }
 
     /**
@@ -225,32 +230,74 @@ public class Code01_CountofRangeSum {
          * 先判断key是否存在，然后添加。
          */
         public void add(long key){
-
-        }
-
-        public boolean containsKey(long key){
-            if(root==null) return false;
-            SBTNode last = findLastIndex(key);
-            return last.key==key;
+            root = add(root, key);
         }
 
         /**
-         * 返回最接近key的节点。
+         * add方法，允许新增重复数据
+         * contains表示是否存在当前key.
+         *
+         * cur为空，直接新建节点返回.
+         * cur.all加1.
+         * 如果key等于cur.key,返回cur。
+         * 如果不包含，cur.size加1
+         * 如果key小于cur.key,去左树添加。
+         * 否则，去右树添加。
+         * 调整cur并返回。
          */
-        private SBTNode findLastIndex(long key) {
+        private SBTNode add(SBTNode cur, long key){
+            if(cur == null) return new SBTNode(key);
+            cur.all++;
+            if(cur.key==key) return cur;
+            if(key<cur.key){
+                cur.l = add(cur.l, key);
+            }else {
+                cur.r = add(cur.r, key);
+            }
+            cur.size = getSize(cur.l)+getSize(cur.r)+1;
+            return maintain(cur);
+        }
+
+        /**
+         * 返回[start, end]范围上有多少个数。
+         */
+        public int range(long start, long end){
+            return lessKeyCount(end+1)-lessKeyCount(start);
+        }
+
+        /**
+         * 返回小于指定key的数据有多少个。
+         * root开始一路向下滑动。
+         * 等于返回
+         * 向右滑收集答案。
+         * 向左滑不收集
+         *
+         * 表为空，返回0.
+         * 定义cur为head。
+         * 定义ans收集答案。
+         * 循环：cur不为空
+         *      如果cur.key等于key
+         *          返回ans累加上cur.l的all
+         *      如果key小于cur.key
+         *          cur来到左树
+         *      否则cur来到右树
+         *          ans累加上cur.all减去右树的all
+         *          cur来到右树
+         * 返回ans
+         */
+        public int lessKeyCount(long key){
             SBTNode cur = root;
-            SBTNode pre = null;
+            int ans = 0;
             while (cur!=null){
-                if(key == cur.key) return cur;
-                pre = cur;
-                if(key<cur.key){
+                if(key == cur.key) return ans+getAll(cur.l);
+                if(key < cur.key){
                     cur = cur.l;
-                }else{
+                }else {
+                    ans += cur.all-getAll(cur.r);
                     cur = cur.r;
                 }
             }
-            return pre;
+            return ans;
         }
-
     }
 }
