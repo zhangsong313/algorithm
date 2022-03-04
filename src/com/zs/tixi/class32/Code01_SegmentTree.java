@@ -308,7 +308,9 @@ public class Code01_SegmentTree {
         int queryTimes = 500;
         for (int i = 0; i < testTimes; i++) {
             int[] origin = genarateRandomArray(len, max);
+            System.out.println("origin.len : "+origin.length);
             SegmentTree seg = new SegmentTree(origin);
+//            Code06_AOE.SegmentTree seg = new Code06_AOE.SegmentTree(origin);
             int S = 1;
             int N = origin.length;
             int root = 1;
