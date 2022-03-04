@@ -26,6 +26,14 @@ package com.zs.tixi.class38;
  * 请你重新构造并返回输入数组people所表示的队列，返回的队列应该格式化为数组queue
  * 其中queue[j]=[hj, kj]是队列中第j个人的属性（queue[0] 是排在队列前面的人）。
  * Leetcode题目：https://leetcode.com/problems/queue-reconstruction-by-height/
+ *
+ * 有序表改写总结：
+ *  1.使用SBT改写。
+ *  2.支持查询排序后第k个数且支持重复数据：
+ *      1） 可以新增数据项all，表示有多少数经过了当前节点。改写需要注意同时调整size和all。add方法好改。delete方法不好改。
+ *      2）可以包装一个Node类型用来保存key和index（相同key也要有不同的index序号），比较时，key相同情况下用index比较。
+ *          这种方案有序表不用考虑重复数据的问题。好改写。
+ *     3)自定义比较器要慎重写。尽量调用系统的compareTo方法。。。。否则有些边界问题自己考虑不到。
  */
 public class T {
 }

@@ -20,12 +20,12 @@ package com.zs.tixi.class38;
 public class Code02_SlidingWindowMedian {
 
 
-    public static void main(String[] args) {
-        double[] doubles = medianSlidingWindow(new int[]{5,5,8,1,4,7,1,3,8,4}, 8);
-        for (double d : doubles) {
-            System.out.print(d+" ");
-        }
-    }
+//    public static void main(String[] args) {
+//        double[] doubles = medianSlidingWindow(new int[]{-2147483648,-2147483648,2147483647,-2147483648,1,3,-2147483648,-100,8,17,22,-2147483648,-2147483648,2147483647,2147483647,2147483647,2147483647,-2147483648,2147483647,-2147483648}, 6);
+//        for (double d : doubles) {
+//            System.out.print(d+" ");
+//        }
+//    }
     /**
      * 创建SBTreeSet 对象。set
      * 先设置窗口的L和R初始位置。
@@ -36,84 +36,99 @@ public class Code02_SlidingWindowMedian {
      * 返回答案.
      */
     public static double[] medianSlidingWindow(int[] nums, int k) {
-        SBTreeSet set = new SBTreeSet();
+        SBTreeSet<Node> set = new SBTreeSet<>();
         for (int i = 0; i < k-1; i++) {
-            set.add(nums[i]);
+            set.add(new Node(i, nums[i]));
         }
         double[] ans = new double[nums.length-k+1];
         int index = 0;
+        boolean isEven = k%2==0;
+        int lower = k/2;
+        int upper = k/2+1;
         for (int i = k-1; i < nums.length; i++) {
-            set.add(nums[i]);
-            if(k%2==0){
-                int lMid = set.getIndex(k/2);
-                int uMid = set.getIndex(k/2+1);
+            set.add(new Node(i, nums[i]));
+            if(isEven){
+                int lMid = set.getIndexKey(lower).val;
+                int uMid = set.getIndexKey(upper).val;
                 ans[index++] = ((double)lMid+(double)uMid) / 2;
             }else {
-                ans[index++] = set.getIndex(k/2+1);
+                ans[index++] = set.getIndexKey(upper).val;
             }
-            set.remove(nums[i-k+1]);
+            set.remove(new Node(i-k+1,nums[i-k+1]));
         }
         return ans;
     }
 
     /**
-     * 有序表节点
-     * key
-     * size：当前树有多少节点。平衡因子
-     * all：当前树总共有多少数据（重复数据也计数）
-     * l:左树
-     * r：右树
+     * 包装后的节点。
+     * val值相同 的情况下，由于index是外部流水号生成，不会重复，保证加入有序表时不会覆盖节点。
      */
-    public static class SBTNode{
-        public int key;
-        public int size;
-        public int all;
-        public SBTNode l;
-        public SBTNode r;
-        public SBTNode(int k){
-            key = k;
-            size = 1;
-            all = 1;
+    public static class Node implements Comparable<Node>{
+        public int val;
+        public int index;
+        public Node(int i, int v){
+            val = v;
+            index = i;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return val==o.val?Integer.valueOf(index).compareTo(o.index):Integer.valueOf(val).compareTo(o.val);
+        }
+
+        @Override
+        public String toString() {
+            return ""+val;
         }
     }
 
-    public static class SBTreeSet{
-        private SBTNode root;
+    /**
+     * 有序表节点
+     * key
+     * size：当前树有多少节点。平衡因子=
+     * l:左树
+     * r：右树
+     */
+    public static class SBTNode<K extends Comparable<K>>{
+        public K key;
+        public int size;
+        public SBTNode<K> l;
+        public SBTNode<K> r;
+        public SBTNode(K k){
+            key = k;
+            size = 1;
+        }
+    }
+
+    public static class SBTreeSet<K extends Comparable<K>>{
+        private SBTNode<K> root;
 
         /**
          * 加入一个数
-         * 由于支持重复值，添加操作时无法判断当前节点的size是否会增加，
-         * 需要传入参数contains来判断是否需要新增节点。
          */
-        public void add (int key){
-            root = add(root, key, isContainsKey(key));
+        public void add (K key){
+            root = add(root, key);
         }
 
         /**
          * 在cur树上新增key。
          *
          * 如果cur为空，直接新建节点返回。
-         * cur的all加1.
          * 如果cur.key等于key
          *      返回cur.
-         * 如果contanins==false。
-         *      cur的size加1
          * 如果key小于cur的key
          *      去左树添加
          * 否则去右树添加。
          * 调整cur后返回。
          */
-        private SBTNode add(SBTNode cur, int key, boolean contains){
+        private SBTNode<K> add(SBTNode<K> cur, K key){
             if(cur==null) return new SBTNode(key);
-            cur.all++;
-            if(cur.key==key)return cur;
-//            if(!contains)cur.size++;
-            if(key<cur.key){
-                cur.l = add(cur.l, key, contains);
+            cur.size++;
+            if(key.compareTo(cur.key)<0){
+                cur.l = add(cur.l, key);
             }else {
-                cur.r = add(cur.r, key, contains);
+                cur.r = add(cur.r, key);
             }
-            cur.size = getSize(cur.l)+getSize(cur.r)+1;
             return maintain(cur);
         }
 
@@ -133,7 +148,7 @@ public class Code02_SlidingWindowMedian {
          *      调整头节点
          * 右树反之
          */
-        private SBTNode maintain(SBTNode cur) {
+        private SBTNode<K> maintain(SBTNode<K> cur) {
             int lSize = getSize(cur.l);
             int rSize = getSize(cur.r);
             int llSize = 0;
@@ -177,20 +192,13 @@ public class Code02_SlidingWindowMedian {
          * @param cur
          * @return
          */
-        private SBTNode leftRotate(SBTNode cur) {
-            int same = cur.all-getAll(cur.r)-getAll(cur.l);
-            SBTNode right = cur.r;
+        private SBTNode<K> leftRotate(SBTNode<K> cur) {
+            SBTNode<K> right = cur.r;
             cur.r = right.l;
             right.l = cur;
             right.size = cur.size;
             cur.size = getSize(cur.l)+getSize(cur.r)+1;
-            right.all = cur.all;
-            cur.all = getAll(cur.l)+getAll(cur.r)+same;
             return right;
-        }
-
-        private int getAll(SBTNode cur) {
-            return cur!=null?cur.all:0;
         }
 
         /**
@@ -198,19 +206,16 @@ public class Code02_SlidingWindowMedian {
          * @param cur
          * @return
          */
-        private SBTNode rightRotate(SBTNode cur) {
-            int same = cur.all-getAll(cur.r)-getAll(cur.l);
+        private SBTNode<K> rightRotate(SBTNode<K> cur) {
             SBTNode left = cur.l;
             cur.l = left.r;
             left.r = cur;
             left.size=cur.size;
             cur.size = getSize(cur.l)+getSize(cur.r)+1;
-            left.all = cur.all;
-            cur.all = getAll(cur.l)+getAll(cur.r)+same;
             return left;
         }
 
-        private int getSize(SBTNode cur) {
+        private int getSize(SBTNode<K> cur) {
             return cur!=null?cur.size:0;
         }
 
@@ -219,9 +224,9 @@ public class Code02_SlidingWindowMedian {
          * 找到最接近key的节点。
          * 判断节点key是否等于key
          */
-        private boolean isContainsKey(int key){
-            SBTNode lastIndex = findLastIndex(key);
-            return lastIndex!=null&& lastIndex.key==key;
+        private boolean isContainsKey(K key){
+            SBTNode<K> lastIndex = findLastIndex(key);
+            return lastIndex!=null&& key.compareTo(lastIndex.key)==0;
         }
 
         /**
@@ -236,13 +241,13 @@ public class Code02_SlidingWindowMedian {
          * @param key
          * @return
          */
-        private SBTNode findLastIndex(int key){
-            SBTNode cur = root;
-            SBTNode pre = null;
+        private SBTNode<K> findLastIndex(K key){
+            SBTNode<K> cur = root;
+            SBTNode<K> pre = null;
             while (cur!=null){
-                if(key==cur.key) return cur;
+                if(key.compareTo(cur.key)==0) return cur;
                 pre = cur;
-                if(key<cur.key){
+                if(key.compareTo(cur.key)<0){
                     cur = cur.l;
                 }else {
                     cur = cur.r;
@@ -256,7 +261,7 @@ public class Code02_SlidingWindowMedian {
          * 如果不包含key，直接返回。
          * root执行delete
          */
-        public void remove(int key){
+        public void remove(K key){
             if(!isContainsKey(key))return;
             root = delete(root, key);
         }
@@ -291,17 +296,14 @@ public class Code02_SlidingWindowMedian {
          *          cur来到next
          * 返回cur
          */
-        private SBTNode delete(SBTNode cur, int key) {
-            cur.all--;
-            if(key<cur.key){
+        private SBTNode<K> delete(SBTNode<K> cur, K key) {
+            cur.size--; // 需要删除当前节点。
+            if(key.compareTo(cur.key)<0){
                 cur.l = delete(cur.l, key);
-            }else if (key>cur.key){
+            }else if (key.compareTo(cur.key)>0){
                 cur.r = delete(cur.r, key);
             }else {
-                int same = cur.all-getAll(cur.l)-getAll(cur.r);
-                if(same>0) return cur;
 
-                cur.size--; // 需要删除当前节点。
                 if(cur.l==null&& cur.r==null){
                     cur = null;
                 }else if(cur.l==null&&cur.r!=null){
@@ -309,16 +311,9 @@ public class Code02_SlidingWindowMedian {
                 }else if(cur.l!=null&&cur.r==null){
                     cur = cur.l;
                 }else{
-                    SBTNode next = cur.r;
-                    while (next.l!=null) {
-                        next = cur.l;
-                    }
-                    int nextAll = next.all; //查出后继节点的all。
-
-                    next = cur.r;
+                    SBTNode<K> next = cur.r;
                     SBTNode pre = null;
                     while (next.l!=null){ // cur.r的左边界每个节点调整all和size
-                        next.all-=nextAll;
                         next.size--;
                         pre = next;
                         next = next.l;
@@ -332,13 +327,10 @@ public class Code02_SlidingWindowMedian {
                     next.l = cur.l; // 设置cur.l
 
                     next.size = cur.size;// 调整cur.size和cur.all
-                    next.all = cur.all;
 
                     cur = next;
                 }
             }
-            // 尝试调整cur的size
-            if(cur!=null) cur.size = getSize(cur.l)+getSize(cur.r)+1;
             return cur;
         }
 
@@ -352,18 +344,30 @@ public class Code02_SlidingWindowMedian {
          * @param kth
          * @return
          */
-        public int getIndex(int kth){
-            if(kth<0||kth>getAll(root)) throw new RuntimeException("out of range : "+kth+" --- "+getAll(root));
+        public K getIndexKey(int kth){
+            if(kth<0||kth>getSize(root)) throw new RuntimeException("out of range : "+kth+" --- "+getSize(root));
             return getIndex(root, kth);
         }
-        private int getIndex(SBTNode cur, int kth){
-            if(kth<=getAll(cur.l)){
-                return getIndex(cur.l, kth);
-            }else if(kth<=cur.all-getAll(cur.r)){
+        private K getIndex(SBTNode<K> cur, int kth){
+            if(kth==getSize(cur.l)+1){
                 return cur.key;
+            }else if(kth<=getSize(cur.l)){
+                return getIndex(cur.l, kth);
             }else {
-                return getIndex(cur.r, kth - (cur.all - getAll(cur.r)));
+                return getIndex(cur.r, kth - getSize(cur.l)-1);
             }
         }
+//        public void printTree(){
+//            System.out.print("[");
+//            if(root!=null)pre(root);
+//            System.out.println("]");
+//
+//        }
+//        private void pre(SBTNode<K> cur){
+//            if(cur==null) return;
+//            pre(cur.l);
+//            System.out.print(cur.key+" ");
+//            pre(cur.r);
+//        }
     }
 }
