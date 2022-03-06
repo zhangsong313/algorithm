@@ -36,4 +36,6 @@ package com.zs.tixi.class38;
  *     3)自定义比较器要慎重写。尽量调用系统的compareTo方法。。。。否则有些边界问题自己考虑不到。
  */
 public class T {
+    public static void main(String[] args) {
+    }
 }
