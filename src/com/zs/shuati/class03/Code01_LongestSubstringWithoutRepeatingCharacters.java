@@ -36,7 +36,7 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
                 return Math.max(ans, R-L+1);
             }
             ans = Math.max(ans, R-L);
-            while (str[L] != str[R]){
+            while (L<=R && str[L] != str[R]){
                 window[str[L]] = false;
                 L++;
             }
@@ -60,22 +60,19 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
         if (s==null || s.length()==0) return 0;
         char[] str = s.toCharArray();
         int N = str.length;
-        int[] dp = new int[N];
 
         int[] last = new int[256];
         for (int i = 0; i < last.length; i++) {
             last[i] = -1;
         }
-
-        dp[0] = 1;
         last[str[0]] = 0;
+        int ans = 1;
+        int pre = 1;
         for (int i = 1; i < N; i++) {
-            if(last[str[i]] >= i-dp[i-1]){
-                dp[i] = i-last[str[i]];
-            }else {
-                dp[i] = dp[i-1]+1;
-            }
+            pre = Math.min(i-last[str[i]], pre+1);
+            ans = Math.max(pre, ans);
+            last[str[i]] = i;
         }
-        return dp[N];
+        return ans;
     }
 }
