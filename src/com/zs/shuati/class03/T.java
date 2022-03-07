@@ -4,6 +4,7 @@ package com.zs.shuati.class03;
  * 题目：
  *
  * 求一个字符串中，最长无重复字符子串长度
+ * 本题测试链接 : https://leetcode.com/problems/longest-substring-without-repeating-characters/
  *
  * 只由小写字母（a~z）组成的一批字符串，都放在字符类型的数组String[] arr中，如果其中某两个字符串所含有的字符种类完全一样
  * 就将两个字符串算作一类，比如baacbba和bac就算作一类，返回arr中有多少类
