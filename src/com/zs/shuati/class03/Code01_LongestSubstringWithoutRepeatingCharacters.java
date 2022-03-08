@@ -75,4 +75,29 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
         }
         return ans;
     }
+
+    public static void main(String[] args) {
+        int maxLen = 100;
+        for (int i = 0; i < 10000; i++) {
+            String str = getRandomStr(maxLen);
+            int ans1 = lengthOfLongestSubstring(str);
+            int ans2 = lengthOfLongestSubstring2(str);
+            if(ans1!=ans2){
+                System.out.println(str);
+                System.out.println(ans1);
+                System.out.println(ans2);
+                throw new RuntimeException("测试失败");
+            }
+        }
+    }
+
+    // test
+    private static String getRandomStr(int maxLen) {
+        int len = (int)(Math.random()*maxLen)+1;
+        char[] chars = new char[len];
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = (char)(Math.random()*256);
+        }
+        return String.valueOf(chars);
+    }
 }
