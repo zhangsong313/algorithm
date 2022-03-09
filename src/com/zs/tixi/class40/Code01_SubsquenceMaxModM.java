@@ -1,6 +1,7 @@
 package com.zs.tixi.class40;
 
 import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * 给定一个非负数组arr，和一个正数m，返回arr的所有子序列中累加和%m之后的最大值
@@ -117,10 +118,61 @@ public class Code01_SubsquenceMaxModM {
      * mod左和mod右相加后尝试去更新ans
      */
     public static int dp3(int[] arr, int m){
-        HashSet<Integer> leftSet = new HashSet<>(m);
-        HashSet<Integer> rightSet = new HashSet<>(m);
-        int mid = arr.length>>1;
+        TreeSet<Integer> leftSet = new TreeSet<>();
+        TreeSet<Integer> rightSet = new TreeSet<>();
+        int mid = arr.length-1>>1;
+        process3(arr, 0, mid,0, m, leftSet);
+        process3(arr, mid+1, arr.length-1,0, m, rightSet);
+        int ans = 0;
+        for (Integer leftMod : leftSet) {
+            Integer rightMod = rightSet.lower(m - leftMod);
+            ans = Math.max(ans, leftMod+rightMod);
+        }
+        return ans;
+    }
+
+    /**
+     * 将index..end范围的所有子序列的累加和%m的结果收集到set里。之前的累加和为preSum
+     * 如果来到end+1位置
+     * set收集preSum%m，返回
+     *
+     * 尝试不拿当前位置的数：递归调用(index+1, end, preSum);
+     * 尝试拿当前位置的数,递归调用(index+1, end, preSum+arr[index]);
+     */
+    private static void process3(int[] arr, int index, int end, int preSum, int m,  TreeSet<Integer> set){
+        if(index == end+1){
+            set.add(preSum%m);
+            return;
+        }
+        process3(arr, index+1, end, preSum, m, set);
+        process3(arr, index+1, end, preSum+arr[index], m, set);
+    }
+
+    public static int[] generateRandomArray(int len, int value) {
+        int[] ans = new int[(int) (Math.random() * len) + 1];
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = (int) (Math.random() * value);
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        int len = 10;
+        int value = 100;
+        int m = 76;
+        int testTime = 500000;
+        System.out.println("test begin");
+        for (int i = 0; i < testTime; i++) {
+            int[] arr = generateRandomArray(len, value);
+            int ans1 = max1(arr, m);
+            int ans2 = dp1(arr, m);
+            int ans3 = dp2(arr, m);
+            int ans4 = dp3(arr, m);
+            if (ans1 != ans2 || ans2 != ans3 || ans3 != ans4) {
+                System.out.println("Oops!");
+            }
+        }
+        System.out.println("test finish!");
 
     }
-    private static void process3(int[] arr, int start, int end, int m, HashSet)
 }
