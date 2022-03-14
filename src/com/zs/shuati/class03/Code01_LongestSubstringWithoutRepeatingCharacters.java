@@ -21,26 +21,36 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
      */
     public static int lengthOfLongestSubstring(String s) {
         if (s==null || s.length()==0) return 0;
+        // L R 左闭右开
         int L = 0;
-        int R = 0;
-        char[] str = s.toCharArray();
-        boolean[] window = new boolean[256]; // 窗口内指定字符是否存在
-        window[str[0]] = true;
-        int ans = 0;
-        while (R<str.length){
-            while (R<str.length && window[str[R]] == false ){
-                window[str[R]] = true;
-                R++;
+        int R = 1;
+        // ans
+        int ans = 1;
+
+        // lenth
+        int N = s.length();
+        // trans string
+        char[] chars = s.toCharArray();
+        // char last index
+        int[] last = new int[256];
+        for (int i = 0; i < 256; i++) {
+            last[i] = -1;
+        }
+        last[chars[0]] = 0;
+        // R是当前需要查看的字符位置。
+        // 如果R位置的数在set中，L一直向左，直到把它去除。
+        // R位置数加到set中，R向右移动一步。
+        while (R<N){
+            int lastIndex = last[chars[R]];
+            if (lastIndex != -1){
+                for (int i = L; i <= lastIndex; i++) {
+                    last[chars[i]] = -1;
+                }
+                L = lastIndex+1; // 注意此处需要把L位置字符到下一个位置之间的所有字符信息从last中删除。
             }
-            if(R==str.length) {
-                return Math.max(ans, R-L+1);
-            }
+            last[chars[R]] = R;
+            R++;
             ans = Math.max(ans, R-L);
-            while (L<=R && str[L] != str[R]){
-                window[str[L]] = false;
-                L++;
-            }
-            L++;
         }
         return ans;
     }
@@ -77,7 +87,7 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
     }
 
     public static void main(String[] args) {
-        int maxLen = 100;
+        int maxLen = 10;
         for (int i = 0; i < 10000; i++) {
             String str = getRandomStr(maxLen);
             int ans1 = lengthOfLongestSubstring(str);
@@ -97,6 +107,7 @@ public class Code01_LongestSubstringWithoutRepeatingCharacters {
         char[] chars = new char[len];
         for (int i = 0; i < chars.length; i++) {
             chars[i] = (char)(Math.random()*256);
+//            chars[i] += 'a';
         }
         return String.valueOf(chars);
     }

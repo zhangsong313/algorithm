@@ -10,7 +10,7 @@ package com.zs.shuati.class03;
  *
  * 2. 只由小写字母（a~z）组成的一批字符串，都放在字符类型的数组String[] arr中，如果其中某两个字符串所含有的字符种类完全一样
  * 就将两个字符串算作一类，比如baacbba和bac就算作一类，返回arr中有多少类
- * ==== ： 种类统计问题，用bitmap记录信息。去重用hashSet。
+ * ==== ： 频次统计问题，且只关心出现还是未出现，用bitmap记录信息。去重用hashSet。
  *
  * 3. 给定一个只有0和1组成的二维数组，返回边框全是1（内部无所谓）的最大正方形面积
  * 测试链接 : https://leetcode.com/problems/largest-1-bordered-square/
