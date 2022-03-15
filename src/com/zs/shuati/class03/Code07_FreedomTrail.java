@@ -10,4 +10,37 @@ package com.zs.shuati.class03;
  * Leetcode题目：https://leetcode.com/problems/freedom-trail/
  */
 public class Code07_FreedomTrail {
+    /**
+     * 当前来到key的ki位置。ring的ri位置在12点位置，请返回后续需要的最少步数。
+     */
+    public static int findRotateSteps(String r, String k) {
+        char[] ring = r.toCharArray();
+        char[] key = k.toCharArray();
+        int[] ringIndex = new int[256];
+        for (int i = 0; i < ring.length; i++) {
+            ringIndex[ring[i]] = i;
+        }
+        return process(ring, key, ringIndex, 0, 0);
+    }
+
+    /**
+     * 如果ki已经来到key结束位置。返回0
+     *
+     * ring需要来到nextRI位置
+     * 尝试顺时针旋转，需要step1步，递归调用(nextRI, ki+1)+step1
+     * 尝试逆时针旋转，需要step2步, 递归调用(nextRI, ki+1)+step2
+     * 返回两种尝试较小的结果值。
+     */
+    private static int process(char[] ring, char[] key, int[] ringIndex, int ri, int ki) {
+        if(ki==key.length) return 0;
+        if(ringIndex[key[ki]] == ri) return 1;
+
+        int nextRI = ringIndex[key[ki]];
+        // 顺时针旋转
+        int step1 = nextRI>ri?nextRI-ri+1:nextRI+ring.length - ri+1;
+        // 逆时针旋转
+        int step2 = nextRI<ri?ri-nextRI+1:ri-(nextRI-ring.length)+1;
+
+        return process(ring, key, ringIndex, nextRI, ki+1) + Math.min(step1, step2);
+    }
 }
