@@ -8,7 +8,17 @@ public class GraphGenerator {
 	// 
 	// [ 5 , 0 , 7]
 	// [ 3 , 0,  1]
-	// 
+	//
+
+	/**
+	 * 遍历所有边,
+	 * 取出当前边的weight,from值,to值.
+	 * 将from和to尝试放入图的nodes.
+	 * 创建边newEdge.
+	 * from节点:出度加1,nexts加to节点.edges加newEdge.
+	 * to节点:入度加1
+	 * 图的edges加newEdge.
+	 */
 	public static Graph createGraph(int[][] matrix) {
 		Graph graph = new Graph();
 		for (int i = 0; i < matrix.length; i++) {

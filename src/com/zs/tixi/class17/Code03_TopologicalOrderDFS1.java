@@ -50,7 +50,7 @@ public class Code03_TopologicalOrderDFS1 {
     /**
      * 如果map中已经有记录了,直接返回
      *
-     * 定义deep表示当前节点的最大深度.
+     * 定义deep表示邻接点的最大深度.
      * 遍历cur的邻接点:
      *      对每个邻接点递归调用当前函数,得道邻接点最大深度.
      *      deep 更新为deep与邻接点最大深度的较大值.
