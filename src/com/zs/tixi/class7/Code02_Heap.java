@@ -4,8 +4,8 @@ import com.zs.xiaobai.common.MyCompValue;
 
 /**
  * 手动构建大根堆
- * 1. 当前节点的父节点
- * 2. 当前节点的左子节点
+ * 1. 当前节点的父节点: index -1 >> 1
+ * 2. 当前节点的左子节点 : index << 1 | 1
  */
 public class Code02_Heap {
     public static class MyMaxHeap{
@@ -51,7 +51,7 @@ public class Code02_Heap {
          */
         public int poll(){
             if (size ==0 ) throw new RuntimeException("heap is empty");
-            int ans = heap[size-1]; // 取出堆顶数据。
+            int ans = heap[0]; // 取出堆顶数据。
             MyCompValue.swap(heap, 0, --size); // 交换堆顶和堆底数据。堆大小减一
             heapify(heap, 0, size);
             return ans;
@@ -91,7 +91,7 @@ public class Code02_Heap {
         private void heapify(int[] heap, int index, int size){
             int left = index * 2 + 1; // 左子节点
             while (left < size){ // 当左子节点不超出堆大小时进行循环
-                int largest = left+1<size && heap[left] < heap[left+1]? left+1: left;
+                int largest = left+1<size && heap[left] < heap[left+1]? left+1: left; // 找到最大子节点。
                 if (heap[index] >= heap[largest]) { // 如果当前数不小于最大子节点，退出循环。
                     break;
                 }

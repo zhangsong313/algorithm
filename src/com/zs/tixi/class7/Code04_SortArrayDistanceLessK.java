@@ -12,6 +12,7 @@ public class Code04_SortArrayDistanceLessK {
     }
 
     /**
+     * 时间复杂度O(N*log(K+1))
      * 先将arr前K个数放入小根堆。
      * i初始化为0
      * 在K..arr.length-1范围上，迭代变量为index。
@@ -34,19 +35,14 @@ public class Code04_SortArrayDistanceLessK {
         for (int i = 0; i <= K; i++) {
             heap.add(arr[i]);
         }
-//        System.out.println("heap : "+heap);
         int i = 0;
         for (int index = K+1; index < arr.length; index++) {
             arr[i] = heap.poll();
             heap.add(arr[index]);
             i++;
-//            System.out.println("heap : "+heap);
-//            System.out.println("arr : "+ MyCompValue.toStr(arr));
         }
-//        System.out.println("heap : "+heap);
         while (!heap.isEmpty()){
             arr[i++] = heap.poll();
         }
-//        System.out.println("arr : "+ MyCompValue.toStr(arr));
     }
 }

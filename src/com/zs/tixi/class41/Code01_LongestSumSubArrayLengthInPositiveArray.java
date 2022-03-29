@@ -33,5 +33,7 @@ public class Code01_LongestSumSubArrayLengthInPositiveArray {
 
             }
         }
+
+        return 0;
     }
 }
