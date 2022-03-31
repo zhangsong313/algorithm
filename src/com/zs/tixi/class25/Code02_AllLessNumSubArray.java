@@ -21,12 +21,12 @@ public class Code02_AllLessNumSubArray {
      * 定义需要返回的答案ans
      * 循环：L<arr.length
      *      循环:R<arr.length
-     *          两个滑动窗口更新.
+     *          两个滑动窗口队列更新，将R位置数追加到队列。
      *          如果窗口最值差已经超过sum，break。
      *          否则，R++
      *      ans+=R-L
      *      L++;
-     *      两个滑动窗口更新
+     *      两个滑动窗口队列更新，将L位置数弹出队列
      * 返回ans.
      */
     public static int num(int[] arr, int sum) {
@@ -36,7 +36,9 @@ public class Code02_AllLessNumSubArray {
         int L=0, R=0;
         Deque<Integer> dqMax = new LinkedList<>();
         Deque<Integer> dqMin = new LinkedList<>();
-        int ans = 0;
+        dqMax.add(arr[0]);
+        dqMin.add(arr[0]);
+        int ans = 1;
         while (L<arr.length){
             while (R<arr.length){
                 while (dqMax.size()>0 && arr[dqMax.peekLast()]<=arr[R]){
@@ -50,7 +52,9 @@ public class Code02_AllLessNumSubArray {
                 if(arr[dqMax.peekFirst()]-arr[dqMin.peekFirst()]>sum) break;
                 R++;
             }
+
             ans+=R-L;
+
             L++;
             if(dqMax.peekFirst()<L) dqMax.pollFirst();
             if(dqMin.peekFirst()<L) dqMin.pollFirst();
@@ -102,15 +106,13 @@ public class Code02_AllLessNumSubArray {
     }
 
     public static void main(String[] args) {
-        int maxLen = 10;
-        int maxValue = 50;
+        int maxLen = 100;
+        int maxValue = 500;
         int testTime = 100000;
         System.out.println("测试开始");
         for (int i = 0; i < testTime; i++) {
-//            int[] arr = generateRandomArray(maxLen, maxValue);
-//            int sum = (int) (Math.random() * (maxValue + 1));
-            int [] arr = new int[]{26, -5, -1, 6, -29, 1, 37 };
-            int sum = 41;
+            int[] arr = generateRandomArray(maxLen, maxValue);
+            int sum = (int) (Math.random() * (maxValue + 1));
             int ans1 = right(arr, sum);
             int ans2 = num(arr, sum);
             if (ans1 != ans2) {
@@ -123,6 +125,5 @@ public class Code02_AllLessNumSubArray {
             }
         }
         System.out.println("测试结束");
-
     }
 }

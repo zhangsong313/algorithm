@@ -43,11 +43,13 @@ public class Code01_SlidingWindowMaxArray {
         int index = 0;
         res[index++] = arr[dq.peekFirst()];
         for (int i = w; i < arr.length; i++) {
-            if(dq.peekFirst()==i-w) dq.pollFirst();
             while (dq.size()>0 && arr[dq.peekLast()]<=arr[i]){
                 dq.pollLast();
             }
             dq.addLast(i);
+
+            if(dq.peekFirst()==i-w) dq.pollFirst();
+
             res[index++] = arr[dq.peekFirst()];
         }
         return res;
