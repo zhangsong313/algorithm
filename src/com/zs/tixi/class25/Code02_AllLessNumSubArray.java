@@ -36,11 +36,9 @@ public class Code02_AllLessNumSubArray {
         int L=0, R=0;
         Deque<Integer> dqMax = new LinkedList<>();
         Deque<Integer> dqMin = new LinkedList<>();
-        dqMax.add(arr[0]);
-        dqMin.add(arr[0]);
-        int ans = 1;
+        int ans = 0;
         while (L<arr.length){
-            while (R<arr.length){
+            while (R<arr.length ){ // R移动到不符合条件的位置
                 while (dqMax.size()>0 && arr[dqMax.peekLast()]<=arr[R]){
                     dqMax.pollLast();
                 }
@@ -53,11 +51,12 @@ public class Code02_AllLessNumSubArray {
                 R++;
             }
 
-            ans+=R-L;
+            ans+=R-L; // 收集答案
 
-            L++;
-            if(dqMax.peekFirst()<L) dqMax.pollFirst();
+            L++; // L移动到下一位置.
+            if(dqMax.peekFirst()<L) dqMax.pollFirst(); // L左侧位置从队列取出
             if(dqMin.peekFirst()<L) dqMin.pollFirst();
+
         }
         return ans;
     }

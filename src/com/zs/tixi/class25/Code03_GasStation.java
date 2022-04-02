@@ -65,7 +65,7 @@ public class Code03_GasStation {
             dqMin.addLast(R); // 处理从R滑入数.
             R++; // R向右滑
 
-            if(dqMin.peekFirst()<L) dqMin.pollFirst();// 处理从L滑出数.
+            if(dqMin.peekFirst()<L) dqMin.pollFirst();// 处理从L左侧滑出数.
             L++; //L向左滑.
 
             if(rest[dqMin.peekFirst()]-preSum>=0) ans[L] = true; // 获取合理区间的结果
