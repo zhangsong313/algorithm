@@ -7,8 +7,10 @@ package com.zs.shuati.class04;
  * 假设给你一个数组arr，对这个数组的查询非常频繁，且都给了查询组，请返回所有查询的结果
  *
  * 2.返回一个数组中子数组最大累加和
+ * 本题测试链接 : https://leetcode.com/problems/maximum-subarray/
  *
  * 3.返回一个二维数组中子矩阵最大累加和
+ * 本题测试链接 : https://leetcode-cn.com/problems/max-submatrix-lcci/
  *
  * 4.返回一个数组中所选数字不能相邻的情况下最大子序列累加和
  *
@@ -17,6 +19,7 @@ package com.zs.shuati.class04;
  * 每个孩子至少分配到 1 个糖果。
  * 评分更高的孩子必须比他两侧的邻位孩子获得更多的糖果。
  * 那么这样下来，返回老师至少需要准备多少颗糖果
+ * 测试链接 : https://leetcode.com/problems/candy/
  * 进阶：在原来要求的基础上，增加一个要求，相邻的孩子间如果分数一样，分的糖果数必须一样，返回至少需要准备多少颗糖果
  *
  * 6.生成长度为size的达标数组，什么叫达标？对于任意的i<k<j，满足[i]+[j]!=[k]*2。给定一个正数size，返回长度为size的达标数组
