@@ -11,7 +11,7 @@ public class Code07_InterleavingString {
      * 样本对应的动态规划：
      * s1和s2指定范围是否可以交错组成s3对应范围
      */
-    public static boolean interleavingString(String s1, String s2, String s3){
+    public static boolean isInterleave(String s1, String s2, String s3){
         if(s1 == null || s2 == null || s3 == null){
             return false;
         }
@@ -43,8 +43,8 @@ public class Code07_InterleavingString {
      */
     private static boolean process(int len1, int len2, char[] str1, char[] str2, char[] str3) {
         if(len1==0 && len2==0) return true;
-        if(len1==0)return process(0, len2-1, str1, str2, str3);
-        if(len2==0)return process(len1-1, 0, str1, str2, str3);
+        if(len1==0)return str3[len2-1]==str2[len2-1] && process(0, len2-1, str1, str2, str3);
+        if(len2==0)return str3[len1-1]==str1[len1-1] && process(len1-1, 0, str1, str2, str3);
         boolean p1 = str3[len1+len2-1]==str1[len1-1] && process(len1-1, len2, str1, str2, str3);
         boolean p2 = str3[len1+len2-1]==str2[len2-1] && process(len1, len2-1, str1, str2, str3);
         return p1 || p2;
@@ -66,7 +66,7 @@ public class Code07_InterleavingString {
      * 第i行,第j列
      *      dp[i-1][j] || dp[i][j-1]
      */
-    public static boolean interleavingString2(String s1, String s2, String s3){
+    public static boolean isInterleave2(String s1, String s2, String s3){
         if(s1 == null || s2 == null || s3 == null){
             return false;
         }
@@ -80,25 +80,24 @@ public class Code07_InterleavingString {
         boolean[][] dp = new boolean[str1.length+1][str2.length+1];
         dp[0][0] = true;
         for (int i = 1; i <= str1.length; i++) {
-            dp[i][0] = dp[i-1][0] || str1[i-1]==str3[i-1];
+            dp[i][0] = dp[i-1][0] && str1[i-1]==str3[i-1];
         }
         for (int i = 1; i <= str2.length; i++) {
-            dp[0][i] = dp[0][i-1] || str2[i-1]==str3[i-1];
+            dp[0][i] = dp[0][i-1] && str2[i-1]==str3[i-1];
         }
         for (int i = 1; i <= str1.length; i++) {
             for (int j = 1; j <= str2.length; j++) {
-                dp[i][j] = dp[i-1][j] || dp[i][j-1];
+                dp[i][j] = (str3[i+j-1]==str1[i-1] && dp[i-1][j]) || (str3[i+j-1]==str2[j-1] && dp[i][j-1]);
             }
         }
         return dp[str1.length][str2.length];
     }
 
     public static void main(String[] args) {
-        String s1 = "aabcc";
-        String s2 = "dbbca";
-        String s3 = "aadbbcbcac";
-//        boolean ans = interleavingString(s1, s2, s3);
-        boolean ans = interleavingString2(s1, s2, s3);
+        String s1 = "a";
+        String s2 = "";
+        String s3 = "c";
+        boolean ans = isInterleave2(s1, s2, s3);
         System.out.println(ans);
     }
 }

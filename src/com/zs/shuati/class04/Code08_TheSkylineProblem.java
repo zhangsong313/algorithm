@@ -11,7 +11,7 @@ public class Code08_TheSkylineProblem {
      * 要求返回轮廓线变化的拐点坐标.比如{{5, 3}, {7, 0}}
      *
      */
-    public static List<List<Integer>> getSkyline(int[][] matrix) {
+    public List<List<Integer>> getSkyline(int[][] matrix) {
         if(matrix == null || matrix.length == 0
                 || matrix[0] == null || matrix[0].length == 0){
             return new ArrayList<>();
@@ -69,14 +69,14 @@ public class Code08_TheSkylineProblem {
         return ans;
     }
 
-    static class MyComparator implements Comparator<Info>{
+    class MyComparator implements Comparator<Info>{
         @Override
         public int compare(Info o1, Info o2) {
             return Integer.compare(o1.site, o2.site);
         }
     }
 
-    static class Info{
+    class Info{
         public int site; // 变化的为位置
         public int height; // 变化的高度
         public boolean isUp; // 是否是上升。
