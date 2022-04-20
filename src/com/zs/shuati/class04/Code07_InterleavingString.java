@@ -18,7 +18,7 @@ public class Code07_InterleavingString {
         char[] str1 = s1.toCharArray();
         char[] str2 = s2.toCharArray();
         char[] str3 = s3.toCharArray();
-        if(str1.length != str2.length || str2.length != str3.length){
+        if(str1.length + str2.length != str3.length){
             return false;
         }
 
@@ -73,16 +73,16 @@ public class Code07_InterleavingString {
         char[] str1 = s1.toCharArray();
         char[] str2 = s2.toCharArray();
         char[] str3 = s3.toCharArray();
-        if(str1.length != str2.length || str2.length != str3.length){
+        if(str1.length + str2.length != str3.length){
             return false;
         }
 
         boolean[][] dp = new boolean[str1.length+1][str2.length+1];
         dp[0][0] = true;
-        for (int i = 0; i <= str1.length; i++) {
+        for (int i = 1; i <= str1.length; i++) {
             dp[i][0] = dp[i-1][0] || str1[i-1]==str3[i-1];
         }
-        for (int i = 0; i <= str2.length; i++) {
+        for (int i = 1; i <= str2.length; i++) {
             dp[0][i] = dp[0][i-1] || str2[i-1]==str3[i-1];
         }
         for (int i = 1; i <= str1.length; i++) {
@@ -91,5 +91,14 @@ public class Code07_InterleavingString {
             }
         }
         return dp[str1.length][str2.length];
+    }
+
+    public static void main(String[] args) {
+        String s1 = "aabcc";
+        String s2 = "dbbca";
+        String s3 = "aadbbcbcac";
+//        boolean ans = interleavingString(s1, s2, s3);
+        boolean ans = interleavingString2(s1, s2, s3);
+        System.out.println(ans);
     }
 }
