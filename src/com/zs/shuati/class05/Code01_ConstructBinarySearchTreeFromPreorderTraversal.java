@@ -97,10 +97,10 @@ public class Code01_ConstructBinarySearchTreeFromPreorderTraversal {
         int nearGreater = nearBig[l];
 
         if(nearGreater!=-1){ // 找到最近比l位置大的数。
-            head.left = process1(pre, l+1, nearGreater-1); // 设置左树
-            head.right = process1(pre, nearGreater, r); // 设置右树
+            head.left = process2(pre, l+1, nearGreater-1, nearBig); // 设置左树
+            head.right = process2(pre, nearGreater, r, nearBig); // 设置右树
         }else { // 没找到
-            head.left = process1(pre, l+1, r); // 全部设置为左树
+            head.left = process2(pre, l+1, r, nearBig); // 全部设置为左树
         }
 
         return head;
