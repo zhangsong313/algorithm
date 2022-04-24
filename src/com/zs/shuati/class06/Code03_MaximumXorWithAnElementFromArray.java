@@ -28,26 +28,31 @@ public class Code03_MaximumXorWithAnElementFromArray {
 
     static class Node{
         public Node[] next = new Node[2]; // 走向后续的路。
+        public int min = Integer.MAX_VALUE;
     }
 
     /**
      * 将数字的二进制信息加入前缀树
      */
     static class NumTrie{ // 前缀树
-
-        public int min = Integer.MIN_VALUE; // 前缀树中的最小值。（没有满足mi的数直接返回-1）
         public Node head = new Node(); // 头节点
 
+        /**
+         * 注意：------------
+         * 前缀树叶节点也需要设置最小值。
+         * @param num
+         */
         public void add(int num){ // 新加入一个数字
             Node cur = head;
-            for (int i = 31; i >=0; i--) { // 二进制位
+            head.min = Math.min(head.min, num);
+            for (int i = 30; i >=0; i--) { // 二进制位
                 int path = (num >> i) & 1;
                 if (cur.next[path] == null){ // 之前没有对应的路就新建
                     cur.next[path] = new Node();
                 }
                 cur = cur.next[path];
+                cur.min = Math.min(cur.min, num);
             }
-            min = Math.min(min, num); // 更新前缀树最小值
         }
 
         /**
@@ -56,22 +61,37 @@ public class Code03_MaximumXorWithAnElementFromArray {
          * 其他位尽量为1.
          */
         public int maxXor(int xi, int mi){
-            if(mi < min) return -1;
+            if(mi < head.min) return -1;
 
             Node cur = head;
             int ans = 0; // 最终异或的结果
             for (int i = 30; i>=0; i--) { // 二进制位(不考虑符号位,题目已经说明了非负)
                 int path =(xi >> i) & 1;
-                int best = path ^ 1; // 符号位不变，其他位0则取1，1则取0.
-                int m = (mi >> i) & 1; // mi在当前位的数.
-                if(cur.next[best] == null || best>m){ // 如果当前位没有期望的数，或大于mi当前位 走另一条路。
+                int best = path ^ 1; // 0则取1，1则取0.
+                if(cur.next[best] == null ||
+                        cur.next[best].min > mi
+                ){ // 如果当前位没有期望的数，或大于mi当前位 走另一条路。
                     best = best ^ 1;
                 }
-
                 ans |= (path ^ best) << i; // 当前位的数异或到答案上。
                 cur = cur.next[best];
             }
             return ans;
         }
+    }
+
+    /**
+     * [5,2,4,6,6,3]
+     * [[12,4],[8,1],[6,3]]
+     * @param args
+     */
+    public static void main(String[] args) {
+        int[] nums = {5,2,4,6,6,3};
+        int[][] queries = {
+                {12, 4},
+                {8, 1},
+                {6, 3}
+        };
+        System.out.println(maximizeXor(nums, queries));
     }
 }
