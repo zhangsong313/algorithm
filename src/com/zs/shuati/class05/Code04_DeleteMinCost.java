@@ -23,7 +23,7 @@ public class Code04_DeleteMinCost {
         // 判断子序列是否是s1子串。找到最少删除字符数。
         int ans = Integer.MAX_VALUE;
         for (String s : set) {
-            if(s1.indexOf(s) != -1){
+            if(s1.indexOf(s) != -1){ // 此处也可以自己写kmp算法。
                 ans = Math.min(ans, str2.length-s.length());
             }
         }

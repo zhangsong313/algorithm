@@ -1,5 +1,7 @@
 package com.zs.tixi.class28;
 
+import com.zs.xiaobai.common.MyCompValue;
+
 /*
  * KMP算法
  *      假设字符串str长度为N,字符串match长度为M,M<=N
@@ -56,7 +58,7 @@ public class Code01_KMP {
      * 创建和str相同长度的next数组,初始化前两项位置.
      * 定义k==next[1],表示i-1位置和哪个位置比较
      * 定义i=2
-     * 循环:2<str.length
+     * 循环:i < str.length
      *      如果str[i-1]和str[k]的值相等:
      *          next[i++]= ++k; // 当前位置的next值为k+1,i来到下一位置,下一位置需要和当前位置的next值k+1比
      *      否则:
@@ -95,18 +97,20 @@ public class Code01_KMP {
     }
 
     public static void main(String[] args) {
-        int possibilities = 5;
-        int strSize = 20;
-        int matchSize = 5;
-        int testTimes = 5000000;
-        System.out.println("test begin");
-        for (int i = 0; i < testTimes; i++) {
-            String str = getRandomString(possibilities, strSize);
-            String match = getRandomString(possibilities, matchSize);
-            if (kmp(str, match) != str.indexOf(match)) {
-                System.out.println("Oops!");
-            }
-        }
-        System.out.println("test finish");
+//        int possibilities = 5;
+//        int strSize = 20;
+//        int matchSize = 5;
+//        int testTimes = 5000000;
+//        System.out.println("test begin");
+//        for (int i = 0; i < testTimes; i++) {
+//            String str = getRandomString(possibilities, strSize);
+//            String match = getRandomString(possibilities, matchSize);
+//            if (kmp(str, match) != str.indexOf(match)) {
+//                System.out.println("Oops!");
+//            }
+//        }
+//        System.out.println("test finish");
+        int[] next = getNextArr("aabaa".toCharArray());
+        MyCompValue.printArr(next);
     }
 }
