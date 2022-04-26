@@ -123,7 +123,7 @@ public class Code01_AVLTreeMap {
                 }else {
                     int rrHeight = getHeight(cur.r.r);
                     int rlHeight = getHeight(cur.r.l);
-                    if(rrHeight>rlHeight){
+                    if(rrHeight>=rlHeight){
                         cur = leftRotate(cur);
                     }else {
                         cur.r = rightRotate(cur.r);
