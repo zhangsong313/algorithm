@@ -1,6 +1,6 @@
 package com.zs.tixi.class36;
 
-public class AVLTreeMap {
+public class AVLTreeMap2 {
     /**
      * k : key
      * v ： value
@@ -9,7 +9,7 @@ public class AVLTreeMap {
      * h : 高度（平衡因子）
      *
      */
-    class AVLNode<K extends Comparable<K>, V>{
+    public static class AVLNode<K extends Comparable<K>, V>{
         public K k;
         public V v;
         public AVLNode<K, V> l;
@@ -23,7 +23,7 @@ public class AVLTreeMap {
         }
     }
 
-    class AVLMap<K extends Comparable<K>, V>{
+    public static class AVLTreeMap<K extends Comparable<K>, V>{
         private AVLNode<K, V> root;
         private int size;
 
@@ -156,6 +156,17 @@ public class AVLTreeMap {
             return maintain(node);
         }
 
+        public boolean isBalanced(){
+            return isBalance(root);
+        }
+
+        private boolean isBalance(AVLNode<K, V> node){
+            if(node==null) return true;
+            int lH = getHeight(node.l);
+            int rH = getHeight(node.r);
+            return Math.abs(lH-rH)<=1 && isBalance(node.l) && isBalance(node.r);
+        }
+
         /**
          * 检查节点平衡性并调整
          */
@@ -236,7 +247,7 @@ public class AVLTreeMap {
                 node.r = delete(node.r, key);
             }else {
                 if(node.l==null && node.r==null){
-                    node = null;
+                    return null;
                 }else if(node.l==null){
                     node = node.r;
                 }else if(node.r==null){
@@ -253,7 +264,7 @@ public class AVLTreeMap {
                     node = next;
                 }
             }
-            if(node != null) node.h = updateHeight(node); // 当前节点可能被删除为空，且需要更新高度。
+            node.h = updateHeight(node); // 需要更新高度。
             return maintain(node);
         }
 

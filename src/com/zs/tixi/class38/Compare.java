@@ -1,8 +1,8 @@
 package com.zs.tixi.class38;
 
-import com.zs.tixi.class36.Code01_AVLTreeMap.AVLTreeMap;
-import com.zs.tixi.class37.Code01_SizeBalancedTreeMap.SizeBalancedTreeMap;
-import com.zs.tixi.class37.Code02_SkipListMap.SkipListMap;
+import com.zs.tixi.class36.AVLTreeMap2.AVLTreeMap;
+import com.zs.tixi.class37.SizeBalancedTreeMap2.SizeBalancedTreeMap;
+import com.zs.tixi.class37.SkipListMap2.SkipListMap;
 
 import java.util.TreeMap;
 
@@ -10,6 +10,100 @@ import java.util.TreeMap;
  * AVLTree, SBTree, SkipList的功能测试和性能测试
  */
 public class Compare {
+
+    public static void myTest(){
+        System.out.println("自己写功能测试代码");
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        SkipListMap<Integer, Integer> skipList = new SkipListMap<>();
+        int maxK = 1000;
+        int maxV = 100;
+        int testTime = 100000;
+        for (int i = 0; i < testTime; i++) {
+            // 新增
+            int addK = (int)(Math.random()*maxK);
+            int addV = (int)(Math.random()*maxV);
+            treeMap.put(addK, addV);
+            skipList.put(addK, addV);
+
+            // 是否包含key
+            int queryK = (int)(Math.random()*maxK);
+            if(treeMap.containsKey(queryK) != skipList.containsKey(queryK)){
+                System.out.println("contains error");
+                System.out.println(treeMap.containsKey(queryK));
+                System.out.println(skipList.containsKey(queryK));
+                break;
+            }
+
+            int ans1 = 0 ;
+            int ans2 = 0 ;
+            if(treeMap.containsKey(queryK)){
+                // 查询key的value
+                ans1 = treeMap.get(queryK);
+                ans2 = skipList.get(queryK);
+                if(ans1 != ans2){
+                    System.out.println("query error");
+                    System.out.println(ans1);
+                    System.out.println(ans2);
+                    break;
+                }
+                // floor key
+                ans1 = treeMap.floorKey(queryK);
+                ans2 = skipList.floorKey(queryK);
+                if(ans1 != ans2){
+                    System.out.println("floor key error");
+                    System.out.println(ans1);
+                    System.out.println(ans2);
+                    break;
+                }
+
+                // ceiling key
+                ans1 = treeMap.ceilingKey(queryK);
+                ans2 = skipList.ceilingKey(queryK);
+                if(ans1 != ans2){
+                    System.out.println("ceiling key error");
+                    System.out.println(ans1);
+                    System.out.println(ans2);
+                    break;
+                }
+            }
+
+            // first key
+            ans1 = treeMap.firstKey();
+            ans2 = skipList.firstKey();
+            if(ans1 != ans2){
+                System.out.println("first key error");
+                System.out.println(ans1);
+                System.out.println(ans2);
+                break;
+            }
+
+            // last key
+            ans1 = treeMap.lastKey();
+            ans2 = skipList.lastKey();
+            if(ans1 != ans2){
+                System.out.println("last key error");
+                System.out.println(ans1);
+                System.out.println(ans2);
+                break;
+            }
+
+            // remove
+            int removeKey = (int)(Math.random()*maxK);
+            treeMap.remove(removeKey);
+            skipList.remove(removeKey);
+
+            // size
+            ans1 = treeMap.size();
+            ans2 = treeMap.size();
+            if(ans1 != ans2){
+                System.out.println("size error");
+                System.out.println(ans1);
+                System.out.println(ans2);
+                break;
+            }
+        }
+        System.out.println("测试成功");
+    }
 
     public static void functionTest() {
         System.out.println("功能测试开始");
@@ -207,6 +301,12 @@ public class Compare {
                 System.out.println(skip.size());
                 break;
             }
+
+            // 测试平衡性
+            if(!avl.isBalanced()){
+                System.out.println("balance error");
+                break;
+            }
         }
         System.out.println("功能测试结束");
     }
@@ -402,6 +502,7 @@ public class Compare {
     }
 
     public static void main(String[] args) {
+//        myTest();
         functionTest();
         System.out.println("======");
 //		performanceTest();
