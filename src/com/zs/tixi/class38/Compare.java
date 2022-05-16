@@ -15,6 +15,8 @@ public class Compare {
         System.out.println("自己写功能测试代码");
         TreeMap<Integer, Integer> treeMap = new TreeMap<>();
         SkipListMap<Integer, Integer> skipList = new SkipListMap<>();
+        SizeBalancedTreeMap<Integer, Integer> sbt = new SizeBalancedTreeMap<>();
+        AVLTreeMap<Integer, Integer> avl = new AVLTreeMap<>();
         int maxK = 1000;
         int maxV = 100;
         int testTime = 100000;
@@ -24,45 +26,72 @@ public class Compare {
             int addV = (int)(Math.random()*maxV);
             treeMap.put(addK, addV);
             skipList.put(addK, addV);
+            sbt.put(addK, addV);
+            avl.put(addK, addV);
+            
+            if(!sbt.isBalanced()){
+                sbt.isBalanced();
+                System.out.println("sbt balance error");
+                break;
+            }
 
             // 是否包含key
             int queryK = (int)(Math.random()*maxK);
-            if(treeMap.containsKey(queryK) != skipList.containsKey(queryK)){
+            if(treeMap.containsKey(queryK) != skipList.containsKey(queryK)
+            || treeMap.containsKey(queryK) != sbt.containsKey(queryK)
+            || treeMap.containsKey(queryK) != avl.containsKey(queryK)){
                 System.out.println("contains error");
                 System.out.println(treeMap.containsKey(queryK));
                 System.out.println(skipList.containsKey(queryK));
+                System.out.println(sbt.containsKey(queryK));
+                System.out.println(avl.containsKey(queryK));
                 break;
             }
 
             int ans1 = 0 ;
             int ans2 = 0 ;
+            int ans3 = 0;
+            int ans4 = 0;
             if(treeMap.containsKey(queryK)){
                 // 查询key的value
                 ans1 = treeMap.get(queryK);
                 ans2 = skipList.get(queryK);
-                if(ans1 != ans2){
+                ans3 = sbt.get(queryK);
+                ans4 = avl.get(queryK);
+                if(ans1 != ans2 || ans1 != ans3|| ans1 != ans4){
                     System.out.println("query error");
                     System.out.println(ans1);
                     System.out.println(ans2);
+                    System.out.println(ans3);
+                    System.out.println(ans4);
                     break;
                 }
                 // floor key
                 ans1 = treeMap.floorKey(queryK);
                 ans2 = skipList.floorKey(queryK);
-                if(ans1 != ans2){
+                ans3 = sbt.floorKey(queryK);
+                ans4 = avl.floorKey(queryK);
+                if(ans1 != ans2 || ans1 != ans3|| ans1 != ans4){
                     System.out.println("floor key error");
                     System.out.println(ans1);
                     System.out.println(ans2);
+                    System.out.println(ans3);
+                    System.out.println(ans4);
                     break;
                 }
 
                 // ceiling key
                 ans1 = treeMap.ceilingKey(queryK);
                 ans2 = skipList.ceilingKey(queryK);
-                if(ans1 != ans2){
+                ans3 = sbt.ceilingKey(queryK);
+                ans4 = avl.ceilingKey(queryK);
+                if(ans1 != ans2
+                        || ans1 != ans3
+                        || ans1 != ans4){
                     System.out.println("ceiling key error");
                     System.out.println(ans1);
                     System.out.println(ans2);
+                    System.out.println(ans3);
                     break;
                 }
             }
@@ -70,20 +99,30 @@ public class Compare {
             // first key
             ans1 = treeMap.firstKey();
             ans2 = skipList.firstKey();
-            if(ans1 != ans2){
+            ans3 = sbt.firstKey();
+            ans4 = avl.firstKey();
+            if(ans1 != ans2
+                    || ans1 != ans3
+                    || ans1 != ans4){
                 System.out.println("first key error");
                 System.out.println(ans1);
                 System.out.println(ans2);
+                System.out.println(ans3);
                 break;
             }
 
             // last key
             ans1 = treeMap.lastKey();
             ans2 = skipList.lastKey();
-            if(ans1 != ans2){
+            ans3 = skipList.lastKey();
+            ans4 = avl.lastKey();
+            if(ans1 != ans2
+                    || ans1 != ans3
+                    || ans1 != ans4){
                 System.out.println("last key error");
                 System.out.println(ans1);
                 System.out.println(ans2);
+                System.out.println(ans3);
                 break;
             }
 
@@ -91,14 +130,28 @@ public class Compare {
             int removeKey = (int)(Math.random()*maxK);
             treeMap.remove(removeKey);
             skipList.remove(removeKey);
+            sbt.remove(removeKey);
+            avl.remove(removeKey);
 
             // size
             ans1 = treeMap.size();
             ans2 = treeMap.size();
-            if(ans1 != ans2){
+            ans3 = sbt.size();
+            ans4 = avl.size();
+            if(ans1 != ans2
+                    || ans1 != ans3
+                    || ans1 != ans4){
                 System.out.println("size error");
                 System.out.println(ans1);
                 System.out.println(ans2);
+                System.out.println(ans3);
+                System.out.println(ans4);
+                break;
+            }
+
+            // 测试平衡性
+            if(!avl.isBalanced()){
+                System.out.println("avl balance error");
                 break;
             }
         }
@@ -301,12 +354,6 @@ public class Compare {
                 System.out.println(skip.size());
                 break;
             }
-
-            // 测试平衡性
-            if(!avl.isBalanced()){
-                System.out.println("balance error");
-                break;
-            }
         }
         System.out.println("功能测试结束");
     }
@@ -502,8 +549,8 @@ public class Compare {
     }
 
     public static void main(String[] args) {
-//        myTest();
-        functionTest();
+        myTest();
+//        functionTest();
         System.out.println("======");
 //		performanceTest();
     }

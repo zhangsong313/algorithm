@@ -136,6 +136,10 @@ public class SizeBalancedTreeMap2 {
             return getIndex(root, index+1).v;
         }
 
+        public boolean isBalanced(){
+            return isBalance(root);
+        }
+
         /**
          * 找到指定key对应的节点，如果没有，返回查找过程中的最后一个节点。
          */
@@ -280,7 +284,8 @@ public class SizeBalancedTreeMap2 {
                 }
             }
 
-            return node; // 删除不需要调整平衡性。
+            return maintain(node); // 删除不需要调整平衡性。
+//            return node; // 删除不需要调整平衡性。
         }
 
         /**
@@ -330,6 +335,26 @@ public class SizeBalancedTreeMap2 {
             }else{
                 return getIndex(node.r, kth - getSize(node.l) - 1);
             }
+        }
+
+
+        private boolean isBalance(SBTNode<K, V> node) {
+            if(node==null) return true;
+            int ls = getSize(node.l);
+            int lls = 0;
+            int lrs = 0;
+            if(node.l!=null){
+                lls = getSize(node.l.l);
+                lrs = getSize(node.l.r);
+            }
+            int rs = getSize(node.r);
+            int rrs = 0;
+            int rls = 0;
+            if(node.r!=null){
+                rrs = getSize(node.r.r);
+                rls = getSize(node.r.l);
+            }
+            return (lls<=rs && lrs<=rs && rrs<=ls && rls<=ls) && isBalance(node.l) && isBalance(node.r);
         }
     }
 }

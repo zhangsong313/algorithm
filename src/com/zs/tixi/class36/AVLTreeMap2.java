@@ -123,6 +123,9 @@ public class AVLTreeMap2 {
             return cur.k;
         }
 
+        public boolean isBalanced(){
+            return isBalance(root);
+        }
 
         /**
          * 返回查询过程中等于key或者最后一个节点的key
@@ -154,17 +157,6 @@ public class AVLTreeMap2 {
             }
             node.h = updateHeight(node); // 需要手动更新高度.
             return maintain(node);
-        }
-
-        public boolean isBalanced(){
-            return isBalance(root);
-        }
-
-        private boolean isBalance(AVLNode<K, V> node){
-            if(node==null) return true;
-            int lH = getHeight(node.l);
-            int rH = getHeight(node.r);
-            return Math.abs(lH-rH)<=1 && isBalance(node.l) && isBalance(node.r);
         }
 
         /**
@@ -304,6 +296,13 @@ public class AVLTreeMap2 {
                 }
             }
             return ans;
+        }
+
+        private boolean isBalance(AVLNode<K, V> node){
+            if(node==null) return true;
+            int lH = getHeight(node.l);
+            int rH = getHeight(node.r);
+            return Math.abs(lH-rH)<=1 && isBalance(node.l) && isBalance(node.r);
         }
     }
 }

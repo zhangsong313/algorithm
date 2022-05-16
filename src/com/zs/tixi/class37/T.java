@@ -71,14 +71,42 @@ import java.util.TreeMap;
  *                  返回 last.v
  *              返回null
  *      (3) remove(K): void 删除指定key的节点
+ *              如果key为空,返回
+ *              如果containsKey(key) 调用delete(root, key)更新root
  *      (4) containsKey(K): boolean 是否包含指定key
+ *              如果key为空,返回false
+ *              调用findLastIndex(key) 返回last节点
+ *              如果last不为空 且 key等于last.k
+ *                  返回true
+ *              返回false
  *      (5) size(): int map的大小
+ *              root为空，返回0，否则返回root.size
  *      (6) floorKey(K): K 不大于当前key的最大key
+ *              如果key为空，返回null
+ *              调用findLastNoBigIndex(key)获取noBig节点
+ *              如果noBig节点为空，返回null，否则返回noBig.k
  *      (7) ceilingKey(K): K 不小于当前key的最小key
+ *              如果key为空，返回null
+ *              调用findLastNoSmallIndex(key)获取noSmall节点
+ *              如果noSmall为空,返回null,否则返回noSmall.k
  *      (8) firstKey(): K 第一个key
+ *              如果root为空，返回null
+ *              定义cur为root。
+ *              循环：cur.l不为空
+ *                  cur = cur.l
+ *              返回cur.k
  *      (9) lastKey(): K 最后一个key
+ *              如果root为空,返回null
+ *              定义cur为root
+ *              循环:cur.r不为空
+ *                  cur = cur.r
+ *              返回cur.k
  *      (10) getIndexKey(int): K 返回指定下标位置的key（系统api不支持）
+ *              如果:index<0 或 index>size()-1 返回null
+ *              调用getIndex(root, index+1).k返回
  *      (11) getIndexValue(int): V 返回指定下标位置的value（系统api不支持）
+ *              如果：index<0 或 index>size()-1 返回null
+ *              调用getIndex(root, index+1).v返回
  * 4.SBTreeMap私有方法:
  *      (1) findLastIndex(K): SBTNode 返回查询过程中等于key或者最后一个节点的key
  *              定义ans为空
@@ -127,6 +155,12 @@ import java.util.TreeMap;
  *                  node更新为leftRotate(node)
  *                  node.l更新为maintain(node.l)
  *                  node更新为maintain(node)
+ *              如果：rls大于ls
+ *                  node.r更新为rightRotate(node.r)
+ *                  node更新为leftRotate(node)
+ *                  node.l更新为maintain(node.l)
+ *                  node.r更新为maintain(node.r)
+ *                  node更新为maintain(node)
  *              返回node
  *      (4) leftRotate(SBTNode): SBTNode 左旋调整
  *              定义right为node.r
@@ -143,11 +177,60 @@ import java.util.TreeMap;
  *              udpateSize(left)更新left.size
  *              返回left
  *      (6) updateSize(SBTNode): int 更新树大小
+ *              getSize(node.l)+getSize(node.r)+1;
  *      (7) getSize(SBTNode): int 获取树大小
- *      (8) delete(SBTNode): SBTNode 在指定子树上删除指定key对应的节点
+ *              node==null?0:node.size
+ *      (8) delete(SBTNode, K): SBTNode 在指定子树上删除指定key对应的节点
+ *              node.size--; // 注意：此处size--不可放在最后.因为删除后node可能已经被替换为子树了。这种情况下size--会发生错误。
+ *              如果: key小于node.k
+ *                  调用delete(node.l, key)更新node.l
+ *              如果: key大于node.k
+ *                  调用delete(node.r, key)更新node.r
+ *              否则:
+ *                  如果: node.l为空 且 node.r为空
+ *                      node = null;
+ *                  如果: node.l为空
+ *                      node = node.r
+ *                  如果：node.r为空
+ *                      node = node.l
+ *                  否则:
+ *                      定义next为node.r
+ *                      循环：next.l不为空
+ *                          next=next.l
+ *                      调用delete(node.r, next.k)更新node.r
+ *                      next.l更新为node.l
+ *                      next.r更新为node.r
+ *                      next.size更新为node.size
+ *                      node更新为next
+ *              返回node // 删除不需要调整平衡性。
  *      (9) findLastNoBigIndex(K): SBTNode 返回不大于key的最大key对应的节点
+ *              定义ans为null
+ *              定义cur为root
+ *              循环:cur不为空
+ *                  如果: key等于cur.k，返回cur
+ *                  如果：key小于cur.k
+ *                      cur=cur.l
+ *                  否则:
+ *                      ans = cur
+ *                      cur=cur.r
+ *              返回ans
  *      (10) findLastNoSmallIndex(K): SBTNode 返回不小于key的最小key对应的节点
+ *              定义ans为null
+ *              定义ans为root
+ *              循环：cur不为空
+ *                  如果：key等于cur.k, 返回cur
+ *                  如果：key小于cur.k
+ *                      ans=cur
+ *                      cur=cur.l
+ *                  否则：
+ *                      cur=cur.r
+ *              返回ans
  *      (11) getIndex(SBTNode, int): SBTNode 返回node树上第kth个元素
+ *              如果kth等于getSize(node.l)+1,返回node
+ *              如果kth小于等于getSize(node.l)
+ *                  返回getIndex(node.l, kth)
+ *              否则：
+ *                  返回getIndex(node.r, kth-getSize(node.l)-1)
  *
  * SkipList代码总结:
  * 1.SkipListNode节点信息:
@@ -167,18 +250,95 @@ import java.util.TreeMap;
  *          root.nextNodes加入null，表示初始化了第0层，第0层root右侧没有节点。
  * 3.SkipListMap公开方法：
  *      (1) put(K, V): void 设置key的value
+ *              如果key为空，返回
+ *              调用mostRightLessNodeInTree(key),获取pre节点
+ *              定义next为pre第0层的下一个节点
+ *              如果 next不为空 且 key等于next.k
+ *                  next.v更新为value
+ *              否则
+ *                  调用add(key, value)新增一个节点
  *      (2) get(K): V 查询key的value
+ *              如果key为空，返回null
+ *              调用mostRightLessNodeInTree(key)，获取pre节点
+ *              定义next为pre第0层的下一节点
+ *              如果 next不为空 且 key等于next.k 返回next.v,否则返回null
  *      (3) remove(K): void 删除key对应的节点.
+ *              如果containsKey(key)为false，返回
+ *              定义cur为root
+ *              定义curLvl为maxLvl
+ *              循环：curLvl大于等于0
+ *                  调用mostRightLessNodeInLvl(key, cur, curLvl), 获取pre节点。
+ *                  定义next为pre第curLvl层的下一个节点。
+ *                  如果 next不为空 且 key等于next.k
+ *                      pre第curLvl层的下一个节点设置为next第curLvl层的下一个节点
+ *                  如果 curLvl!=0 且 pre==root && next == null
+ *                      root.nextNodes.remove(curLvl) // 移除当前空层
+ *                      maxLvl--
+ *                  curLvl--
+ *              size--
+ *
  *      (4) size(): int map的大小
+ *              返回size
  *      (5) containsKey(K): boolean 是否包含指定key
+ *              如果key为空，返回false
+ *              调用mostRightLessNodeInTree(key)，获取pre节点
+ *              定义next为pre第0层的下一节点
+ *              如果 next不为空 且 key等于next.k 返回true,否则返回false
  *      (6) floorKey(K): K 返回不大于key的最大key.
+ *              如果key为空，返回null
+ *              调用mostRightLessNodeInTree(key)，获取pre节点
+ *              定义next为pre第0层的下一节点
+ *              如果 next不为空 且 key等于next.k 返回next.k,否则返回pre.k
  *      (7) ceilingKey(K): K 返回不小于key的最大key
+ *              如果key为空，返回null
+ *              调用mostRightLessNodeInTree(key)，获取pre节点
+ *              定义next为pre第0层的下一节点
+ *              如果 next不为空 返回next.k,否则返回null
  *      (8) firstKey(): K 返回第一个key
+ *              定义first为root的第0层的下一节点。
+ *              如果first为空，返回null，否则返回first.k
  *      (9) lastKey(): K 返回最后一个key
+ *              定义cur为root
+ *              定义curLvl为maxLvl
+ *              循环：curLvl大于等于0
+ *                  定义next为curLvl层的下一节点
+ *                  循环：next不为空
+ *                      cur=next
+ *                      next更新为cur第curLvl层的下一节点
+ *                  curLvl--
+ *              返回cur.k
  * 4.SkipListMap私有方法:
  *      (1) mostRightLessNodeInTree(K): SkipListNode<K, V> map中比key小的最右节点。
+ *              定义cur为root
+ *              定义lvl为maxLvl
+ *              循环: lvl>=0
+ *                  调用mostRightLessNodeInLvl(key, cur , lvl--), 更新cur
+ *              返回cur
  *      (2) mostRightLessNodeInLvl(K, SkipListNode<K, V>, int): SkipListNode<K, V> 从指定层的指定节点出发，当前层比key小的最右节点。
+ *              定义next为cur节点lvl层的下一个节点
+ *              循环：next!=null && key大于next.k
+ *                  cur更新为next
+ *                  next更新为cur第lvl层的下一个节点
+ *              返回cur
  *      (3) add(K, V): void 在map中新增一个节点。
+ *              定义newLvl为0，表示新增节点的层数
+ *              循环：Math.random() > PROBABILITY
+ *                  newLvl++
+ *              循环：maxLvl 小于 newLvl
+ *                  root.nextNode.add(null) // 新增空层
+ *                  maxLvl++
+ *              根据key,value创建一个新节点，定义为newNode
+ *              循环：0...newLvl
+ *                  newNode.nextNode.add(null) // 新增空层
+ *              定义cur为root
+ *              定义curLvl为maxLvl
+ *              循环：curLvl大于等于0
+ *                  调用mostRightLessNodeInLvl(key, cur, curLvl)更新cur
+ *                  如果：curLvl小于等于newLvl
+ *                      newNode.nextNodes.set(curLvl, cur.nextNodes.get(curLvl)) // 新节点当前层的下一个节点设置为cur的下一个节点
+ *                      cur.nextNodes.set(curLvl, newNode) // cur节点当前层的下一个节点设置为newNode
+ *                  curLvl--
+ *              size++
  */
 public class T {
     public static void main(String[] args) {
