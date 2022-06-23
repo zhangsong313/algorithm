@@ -34,104 +34,30 @@ import java.util.function.Function;
  * 要求额外空间复杂度O(1)，时间复杂度O(N)
  */
 public class T {
-
-    /**
-     *
-     * @param arr
-     * @param i
-     * @param j
-     */
-    public void swap(int[]arr, int i, int j){
-        if (i == j) return;
-        arr[i] = arr[i]^arr[j];
-        arr[j] = arr[i]^arr[j];
-        arr[i] = arr[i]^arr[j];
-    }
-
-    /**
-     * 一个数组中有一个数出现了奇数次，其它数都出现了偶数次，怎么找到并打印这个数
-     * 数组中所有数字异或的结果。同一数偶数次异或会抵消为0。奇数次异或为自身。
-     */
-    public static int printOddTimesNum(int arr[]){
-        int ans = 0;
-        for (int i = 0; i < arr.length; i++) {
-            ans ^= arr[i];
-        }
-        return ans;
-    }
-
-    /**
-     * 如何把int二进制上最右侧的1提取出来。
-     * a & ((~ a)+1)
-     */
-    public static int getRight1(int a){
-        return a & (-a);
-    }
-
-
-    /**
-     * 一个数组中有两个数出现了奇数次，其它数都出现了偶数次，怎么找到并打印这个数
-     */
-    public static int[] printTwoOddTimesNum(int arr[]){
-        // 得到a^b的值.
-        int ans = 0;
-        for (int i = 0; i < arr.length; i++) {
-            ans ^=arr[i];
-        }
-
-        // 找到a^b的最右侧1对应的数。
-        int right1 = getRight1(ans);
-
-        // 遍历arr，只与right1位置不为1的数进行异或运算。得到a的值。
-        int ans2 = ans;
-        for (int i = 0; i < arr.length; i++) {
-            if ((arr[i] & right1) == 0){
-                ans2 ^=arr[i];
-            }
-        }
-
-        int[] ansArr = new int[2];
-        ansArr[0] = ans2;
-        ansArr[1] = ans2 ^ ans; //ans与a异或，得到b的值。
-        return ansArr;
-    }
-
-    /**
-     * 一个数组中有一种数出现了K次，其它数都出现了M次，M>1,K<M。怎么找到并打印出现K次的数，要求空间复杂度O(1)，时间复杂度O(N)
-     */
-    public static int printKTimesNum(PrintKTimesNumParam param){
-        int[] arr = param.arr;
-        int k = param.k;
-        int m = param.m;
-        // 数组中所有数按位相加。
-        int[] sumBits = new int[32];
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < 32; j++) {
-                sumBits[j] += (arr[i] & (1 << 31-j))==0 ? 0 : 1;
-            }
-        }
-
-        // 每个二进制位对m取余是否为0，如果为0，说明此位置上，k次数为0.
-        int[] ansBits = new int[32];
-        for (int i = 0; i < sumBits.length; i++) {
-            if (sumBits[i]%m == 0) {
-                ansBits[i] = 0;
-            } else {
-                ansBits[i] = 1;
-            }
-        }
-
-        int kNum = MyCompValue.transBitArrToInt(ansBits);
-        return kNum;
-    }
-
     public static void main(String[] args) {
-//        checkPrintOddTimesNum(10000, 88, T::printOddTimesNum);
-//        checkPrintTwoOddTimesNum(10000, 5, 5,  T::printTwoOddTimesNum);
-        checkPrintKTimesNum(10000, 5, 5, T::printKTimesNum);
+        // a^b=c
+        // c^a=b
+        // c^b=a
+        // 0^1=1
+        // 0^0=0
+        // 1^1=0
+        int a = (int)(Math.random()*999);
+        int b = (int)(Math.random()*999);
+        MyCompValue.printArr(MyCompValue.transIntToBitArr(a));
+        MyCompValue.printArr(MyCompValue.transIntToBitArr(b));
+        MyCompValue.printArr(MyCompValue.transIntToBitArr(a^b));
+
+
+        checkPrintOddTimesNum(1000, 88, Code02_EvenTimesOddTimes::printOddTimesNum);
+        checkPrintTwoOddTimesNum(1000, 5, 5,  Code02_EvenTimesOddTimes::printTwoOddTimesNum);
+        checkPrintKTimesNum(1000, 5, 5, Code03_KM::printKTimesNum);
+
     }
 
-    public static void checkPrintKTimesNum(int times, int numKinds, int occurTimes, Function<PrintKTimesNumParam, Integer> fun){
+    private static interface ThreeArgReturnFun<Arg1, Arg2, Arg3, R>{
+        R apply(Arg1 arg1, Arg2 arg2, Arg3 arg3);
+    }
+    public static void checkPrintKTimesNum(int times, int numKinds, int occurTimes, ThreeArgReturnFun<int[], Integer, Integer, Integer> fun){
         MyCompValue.times(times, ()->{
             List<Integer> list = new ArrayList<>(); // 测试数组
 
@@ -162,9 +88,8 @@ public class T {
             // 洗牌
             MyCompValue.shuffle(arr);
 
-            PrintKTimesNumParam param = new PrintKTimesNumParam(arr, k, m);
             // 校验结果。
-            int ans = fun.apply(param);
+            int ans = fun.apply(arr, k, m);
             // 对数结果。
             int ansTimes = 0;
             for (int i = 0; i < arr.length; i++) {
@@ -195,17 +120,6 @@ public class T {
             }
 
         });
-    }
-
-    static class PrintKTimesNumParam{
-        public int[] arr;
-        public int k;
-        public int m;
-        public PrintKTimesNumParam(int [] arr, int k, int m){
-            this.arr = arr;
-            this.k = k;
-            this.m = m;
-        }
     }
 
     public static void checkPrintTwoOddTimesNum(int times, int numKinds,int occurTimes,  Function<int[], int[]> fun){

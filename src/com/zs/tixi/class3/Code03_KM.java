@@ -11,10 +11,7 @@ public class Code03_KM {
     /**
      * 一个数组中有一种数出现了K次，其它数都出现了M次，M>1,K<M。怎么找到并打印出现K次的数，要求空间复杂度O(1)，时间复杂度O(N)
      */
-    public static int printKTimesNum(PrintKTimesNumParam param){
-        int[] arr = param.arr;
-        int k = param.k;
-        int m = param.m;
+    public static int printKTimesNum(int[] arr, int k, int m){
         // 数组中所有数按位相加。
         int[] sumBits = new int[32];
         for (int i = 0; i < arr.length; i++) {
@@ -35,16 +32,5 @@ public class Code03_KM {
 
         int kNum = MyCompValue.transBitArrToInt(ansBits);
         return kNum;
-    }
-
-    static class PrintKTimesNumParam{
-        public int[] arr;
-        public int k;
-        public int m;
-        public PrintKTimesNumParam(int [] arr, int k, int m){
-            this.arr = arr;
-            this.k = k;
-            this.m = m;
-        }
     }
 }
