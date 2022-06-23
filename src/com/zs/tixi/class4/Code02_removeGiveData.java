@@ -4,8 +4,49 @@ package com.zs.tixi.class4;
  * 链表删除给定值。
  */
 public class Code02_removeGiveData {
+
+    public static void main(String[] args) {
+//        int[] arr = MyCompValue.randomIntArr(10, 88);
+        int[] arr = new int[]{5, 6, 7, 5, 6, 8, 8};
+        Node node = randomLinkedList(arr);
+        printLinkedList(node);
+        int delIndex = (int)(Math.random()*arr.length);
+        System.out.println("del: "+delIndex);
+//        Node node2 = removeGiveData(node, arr[delIndex]);
+        Node node2 = removeGiveData2(node, 8);
+        printLinkedList(node2);
+
+    }
+
+    private static void printLinkedList(Node head){
+        while (head!=null){
+            System.out.print(head.data+" ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+
+    private static Node randomLinkedList(int[] arr){
+
+        if(arr.length==0) return null;
+        Node head = new Node();
+        head.data = arr[0];
+        Node cur = head;
+        for (int i = 1; i < arr.length; i++) {
+            cur.next = new Node();
+            cur.next.data = arr[i];
+            cur = cur.next;
+        }
+        return head;
+    }
     /**
      * 链表删除给定值。
+     *
+     * prev为上一个不是num的节点
+     * head为当前节点。
+     * 如果head.data与num相等，prev.next不更新. head跳到下一位置。（相等位置被越过了）
+     * 否则：prev.next指向当前head，prev来到下一位置，head跳到下一位置。
+     *
      * @param head 给定的链表
      * @param num 给定需要从链表中删除的值。
      * @return 返回删除后的链表结果。
@@ -21,6 +62,7 @@ public class Code02_removeGiveData {
             }
             head = head.next; // head移动到下一位置。
         }
+        if (prev!=null) prev.next = head; // 删除结尾位置。
         return res;
     }
 
