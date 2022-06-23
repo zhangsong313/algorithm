@@ -12,15 +12,13 @@ public class Code02_MaximumXorOfTwoNumbersInAnArray {
     public static int findMaximumXOR(int[] arr) {
         if(arr == null || arr.length<2) return 0;
 
+        int N = arr.length;
         NumTrie numTrie = new NumTrie();
-        numTrie.add(arr[0]);
 
-        int ans = Integer.MIN_VALUE;
-        for (int i = 1; i < arr.length; i++) {
-            ans = Math.max(ans, numTrie.maxXor(arr[i]));
+        for (int i = 0; i < N-1; i++) {
             numTrie.add(arr[i]);
         }
-        return ans;
+        return numTrie.maxXor(arr[N-1]);
     }
 
     static class Node{
