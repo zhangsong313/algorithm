@@ -22,6 +22,38 @@ public class Code01_Swap {
         return new int[]{a, b};
     }
 
+    // 利用加法交换
+    public static int[] swapNum2(int a, int b){
+        a = a+b;
+        b = a-b;
+        a = a-b;
+        return new int[]{a, b};
+    }
+
+    // 利用减法交换
+    public static int[] swapNum3(int a, int b){
+        a = a-b;
+        b = a+b;
+        a = -(a-b);
+        return new int[]{a, b};
+    }
+
+    // 利用乘法交换
+    public static int[] swapNum4(int a, int b){
+        a = a*b;
+        b = a/b;
+        a = a/b;
+        return new int[]{a, b};
+    }
+
+    // 利用除法交换(有除零异常，不要用这种方法)
+    public static int[] swapNum5(int a, int b){
+        a = a/b;
+        b = a*b;
+        a = 1/(a/b);
+        return new int[]{a, b};
+    }
+
     /**
      * 不用额外变量交换数组中两个数的值
      */
@@ -34,6 +66,10 @@ public class Code01_Swap {
 
     public static void main(String[] args) {
         checkSwapNum(1000, 999, Code01_Swap::swapNum);
+        checkSwapNum(1000, 999, Code01_Swap::swapNum2);
+        checkSwapNum(1000, 999, Code01_Swap::swapNum3);
+        checkSwapNum(1000, 999, Code01_Swap::swapNum4);
+//        checkSwapNum(1000, 999, Code01_Swap::swapNum5);
         checkSwapArrIndex(1000, 999, Code01_Swap::swap);
     }
 
