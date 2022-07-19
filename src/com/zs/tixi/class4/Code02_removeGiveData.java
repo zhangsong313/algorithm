@@ -6,39 +6,9 @@ package com.zs.tixi.class4;
 public class Code02_removeGiveData {
 
     public static void main(String[] args) {
-//        int[] arr = MyCompValue.randomIntArr(10, 88);
-        int[] arr = new int[]{5, 6, 7, 5, 6, 8, 8};
-        Node node = randomLinkedList(arr);
-        printLinkedList(node);
-        int delIndex = (int)(Math.random()*arr.length);
-        System.out.println("del: "+delIndex);
-//        Node node2 = removeGiveData(node, arr[delIndex]);
-        Node node2 = removeGiveData2(node, 8);
-        printLinkedList(node2);
-
+        TestUtil.checkRemoveGiveData(1000, 99, 99, Code02_removeGiveData::removeGiveData);
     }
 
-    private static void printLinkedList(Node head){
-        while (head!=null){
-            System.out.print(head.data+" ");
-            head = head.next;
-        }
-        System.out.println();
-    }
-
-    private static Node randomLinkedList(int[] arr){
-
-        if(arr.length==0) return null;
-        Node head = new Node();
-        head.data = arr[0];
-        Node cur = head;
-        for (int i = 1; i < arr.length; i++) {
-            cur.next = new Node();
-            cur.next.data = arr[i];
-            cur = cur.next;
-        }
-        return head;
-    }
     /**
      * 链表删除给定值。
      *
@@ -62,66 +32,7 @@ public class Code02_removeGiveData {
             }
             head = head.next; // head移动到下一位置。
         }
-        if (prev!=null) prev.next = head; // 删除结尾位置。
+        if (prev!=null) prev.next = null; // 删除结尾位置。
         return res;
-    }
-
-    /**
-     * 好的写法.
-     * @param head
-     * @param num
-     * @return
-     */
-    public static Node removeGiveData2(Node head, int num){
-        // 将链表开始部分的给定值跳过。
-        while (head!=null){
-            if (head.data !=num){
-                break;
-            }
-            head = head.next;
-        }
-
-        Node prev = null;
-        Node curr = head;
-        while (curr!=null){
-
-            if(curr.data != num){
-                prev.next = curr; // 非删除值情况下更新prev.next
-                prev = curr; // prev只有当值为非删除值时才移动,否则不移动
-            }
-
-            curr = curr.next; /// curr一直向后移动
-        }
-        return head;
-    }
-
-    /**
-     * 好的写法.
-     * @param head
-     * @param num
-     * @return
-     */
-    public static Node removeGiveData3(Node head, int num){
-        // 将链表开始部分的给定值跳过。
-        while (head!=null){
-            if (head.data !=num){
-                break;
-            }
-            head = head.next;
-        }
-
-        Node prev = head;
-        Node curr = head;
-        while (curr!=null){
-
-            if(curr.data == num){
-                prev.next = curr.next; // 更新prev指向下一个值.
-            } else {
-                prev = curr; // prev只有当值为非删除值时才移动,否则不移动
-            }
-
-            curr = curr.next; /// curr一直向后移动
-        }
-        return head;
     }
 }

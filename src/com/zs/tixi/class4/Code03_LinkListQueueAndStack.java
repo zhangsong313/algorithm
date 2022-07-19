@@ -1,106 +1,114 @@
 package com.zs.tixi.class4;
 
+import java.util.NoSuchElementException;
+
 /**
  * 链表实现队列和栈。
  * 先实现双端队列.
  * 队列和栈通过封装双端队列得道.
  */
 public class Code03_LinkListQueueAndStack {
-    public static class Node<T> {
-        public T value;
-        public Node<T> last;
-        public Node<T> next;
 
-        public Node(T data) {
-            value = data;
-        }
+    /**
+     * 双端队列接口
+     * @param <E>
+     */
+    public static interface DequeInterface<E>{
+        void addFirst(E e);
+        void addLast(E e);
+        E removeFirst();
+        E removeLast();
+        int size();
     }
 
-    public class Deque<T>{
-        private Node<T> head;
-        private Node<T> tail;
-        private Integer size = 0;
+    /**
+     * 实现双端队列
+     * @param <E>
+     */
+    public static class MyDeque<E> implements DequeInterface<E> {
+        private int size = 0;
+        private Node<E> head;
+        private Node<E> tail;
 
-        /**
-         * 从头部添加.
-         * @return
-         */
-        public void pushToHead(T data){
-            Node<T> curr = new Node<>(data);
-
-            if (head == null){ // 如果为空.head和tail指向curr.
-                head = curr;
-                tail = curr;
+        @Override
+        public void addFirst(E e) {
+            // 首先生成新节点
+            // 核心操作： 新节点指向头节点，头节点指向新节点，更新头节点为新节点。
+            // 注意处理头节点为空的情况:头节点和尾结点都指向新节点。
+            // size++
+            Node<E> newNode = new Node<>(e);
+            if(head==null){
+                head = newNode;
+                tail = newNode;
             } else {
-                // curr和head互相连接,更新head变量指向curr.
-                curr.next = head;
-                head.last = curr;
-                head = curr;
+                newNode.next = head;
+                head.prev = newNode;
+                head = newNode;
             }
             size++;
         }
 
-        /**
-         * 向尾部添加
-         * @return
-         */
-        public void pushToTail(T data){
-            Node<T> curr = new Node<>(data);
-
-            if (head == null){ // 如果为空.head和tail指向curr.
-                head = curr;
-                tail = curr;
-            } else {
-                // curr和tail互相连接,更新tail变量指向curr.
-                curr.last = tail;
-                tail.next = curr;
-                tail = curr;
+        @Override
+        public void addLast(E e) {
+            Node<E> newNode = new Node<>(e);
+            if(head==null){
+                head = newNode;
+                tail = newNode;
+            }else {
+                newNode.prev = tail;
+                tail.next = newNode;
+                tail = newNode;
             }
             size++;
         }
 
-        /**
-         * 从头部拿出
-         * @return
-         */
-        public T popFromHead(){
-            if (head == null) return null; // 链表为空直接返回null
-            T value = head.value;
-
-            if (head == tail){ // 需要考虑只有一个的情况
+        @Override
+        public E removeFirst() {
+            // head为空，抛出异常。
+            // 获取head的值用来返回。
+            // 核心操作：head来到下一位置，更新head的prev为null。
+            // 注意处理head==tail的情况
+            // size--
+            if(head==null){
+                throw new NoSuchElementException();
+            }
+            E res = head.val;
+            if(head==tail){
                 head = null;
                 tail = null;
-            } else {
-                head = head.next;// 移动head位置,并断开head与上一节点.
-                head.last = null;
+            }else {
+                head = head.next;
+                head.prev = null;
             }
-
             size--;
-            return value;
+            return res;
         }
 
-        /**
-         * 从尾部拿出.
-         * @return
-         */
-        public T popFromTail(){
-            if (head == null) return null; // 链表为空直接返回null
-            T value = tail.value;
-
-            if (head == tail){ // 需要考虑只有一个的情况
+        @Override
+        public E removeLast() {
+            if(head==null) throw new NoSuchElementException();
+            E res = tail.val;
+            if(head==tail){
                 head = null;
                 tail = null;
-            } else {
-                tail = tail.last;// 移动tail位置,并断开tail与下一节点.
+            }else {
+                tail = tail.prev;
                 tail.next = null;
             }
-
             size--;
-            return value;
+            return res;
         }
 
-        public Integer size(){
+        @Override
+        public int size() {
             return size;
+        }
+
+        private static class Node<N>{
+            public N val;
+            public Node<N> prev;
+            public Node<N> next;
+            public Node(N data){val = data;}
         }
     }
 
@@ -109,23 +117,25 @@ public class Code03_LinkListQueueAndStack {
      * @param <T>
      */
     class MyStack<T>{
-        Deque<T> deque = new Deque<>();
+        // 实现栈：push操作调用addFirst， pop调用removeFirst
+        MyDeque<T> deque = new MyDeque<>();
         public void push(T data){
-            deque.pushToHead(data);
+            deque.addFirst(data);
         }
         public T pop(){
-            return deque.popFromHead();
+            return deque.removeFirst();
         }
         public Integer size(){return deque.size();}
     }
 
     class MyQueue<T>{
-        Deque<T> deque = new Deque<>();
+        // 实现队列：push调用addFirst, poll调用removeLast
+        MyDeque<T> deque = new MyDeque<>();
         public void push(T data){
-            deque.pushToHead(data);
+            deque.addFirst(data);
         }
         public T poll(){
-            return deque.popFromTail();
+            return deque.removeLast();
         }
         public Integer size(){return deque.size();}
     }

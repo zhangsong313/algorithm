@@ -8,7 +8,7 @@ import java.util.Queue;
  */
 public class Code07_TwoQueueImplementStack {
 
-    class TwoQueueImplementStack<T>{
+    static class TwoQueueImplementStack<T>{
         Queue<T> queue;
         Queue<T> help;
 
@@ -31,5 +31,19 @@ public class Code07_TwoQueueImplementStack {
             help = tmp;
             return ans;
         }
+    }
+
+    public static void main(String[] args) {
+        TwoQueueImplementStack stack = new TwoQueueImplementStack();
+        stack.push("a");
+        stack.push("b");
+        stack.push("c");
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        stack.push("d");
+        stack.push("e");
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
     }
 }
