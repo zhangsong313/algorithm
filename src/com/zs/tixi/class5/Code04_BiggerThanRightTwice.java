@@ -18,11 +18,44 @@ public class Code04_BiggerThanRightTwice {
      * @return
      */
     private static int process(int[] arr, int L, int R) {
+        // 核心操作：找到中点， 左侧递归排序求结果，右侧递归排序求结果， merge合并过程求结果， 将三个结果相加得到答案。
+        // 如果l==r, 返回0
         if(L==R) return 0;
         int M = L + ((R-L)>>1);
         return process(arr, L, M)+
                 process(arr, M+1 , R)+
-                merge(arr, L, M, R);
+                merge2(arr, L, M, R);
+    }
+
+    private static int merge2(int[] arr, int l, int m, int r){
+        // 核心操作：对于左部分每个位置，求右部分有多少个数的2倍小于它，由于左右部分有序，因此使用双指针，无需回退遍历即可统计出答案。
+        // 统计完成后左右指针回归原始位置。
+        // 剩余操作和归并排序完全相同。
+        int[] help = new int[r-l+1];
+        int p1=l, p2=m+1, p3=0, ans=0;
+        while (p1<=m){
+            while (p2<=r && arr[p2]*2 < arr[p1]){
+                p2++;
+            }
+            ans+= p2-m-1;
+            p1++;
+        }
+        p1=l;
+        p2=m+1;
+
+        while (p1<=m && p2<=r){
+            help[p3++] = arr[p1]<=arr[p2] ? arr[p1++] : arr[p2++];
+        }
+        while (p1<=m){
+            help[p3++] = arr[p1++];
+        }
+        while (p2<=r){
+            help[p3++] = arr[p2++];
+        }
+        for (int i = 0; i < help.length; i++) {
+            arr[l+i] = help[i];
+        }
+        return ans;
     }
 
     /**

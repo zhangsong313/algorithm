@@ -1,17 +1,53 @@
 package com.zs.tixi.class5;
 
+import com.zs.xiaobai.common.MyCompValue;
+
 /**
  * 归并排序,分别使用递归和非递归方法.
  */
 public class Code01_MergeSort {
+
+    public static void main(String[] args) {
+        MyCompValue.checkSort(10000, 99, 99, Code01_MergeSort::sort);
+    }
 
     public static void sort(int[] arr){
         if (arr == null || arr.length<2){
             return;
         }
 
-//        mergeSort(arr, 0, arr.length-1);
-        mergeSort2(arr);
+        mergeSort(arr, 0, arr.length-1);
+//        mergeSort3(arr, 0, arr.length-1);
+//        mergeSort2(arr);
+    }
+    public static void mergeSort3(int[] arr, int l , int r){
+        // 核心操作：找到中点，对左侧递归排序，对右侧递归排序。调用merge函数合并两侧使得有序。
+        // 如果l==r，直接返回
+        if(l==r) return;
+        int m = l + (r-l >> 1);
+        mergeSort3(arr, l, m);
+        mergeSort3(arr, m+1, r);
+        merge3(arr, l, m, r);
+    }
+    private static void merge3(int[] arr, int l , int m, int r){
+        // 核心操作：创建help数组，从左到右以此对比左右两部分的值，优先将左侧较小的值放入help数组。
+        // 需要指针p1指向左部分起始位置， p2指向右部分起始位置, p3指向help数组起始位置。
+        // 将左部分或右部分剩余的数依次放入help数组。
+        // 将help内的数放回arr。
+        int[] help = new int[r-l+1];
+        int p1=l, p2=m+1, p3=0;
+        while (p1<=m && p2<=r){
+            help[p3++] = arr[p1]<=arr[p2] ? arr[p1++] : arr[p2++];
+        }
+        while (p1<=m){
+            help[p3++] = arr[p1++];
+        }
+        while (p2<=r){
+            help[p3++] = arr[p2++];
+        }
+        for (int i = 0; i < help.length; i++) {
+            arr[l+i] = help[i];
+        }
     }
 
     /**
