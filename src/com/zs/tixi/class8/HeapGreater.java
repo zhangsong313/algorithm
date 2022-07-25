@@ -90,8 +90,8 @@ public class HeapGreater<T> {
         if(isEmpty()) throw new RuntimeException("heap is empty!");
 
         T ans = heap.get(0);
-        swap(0, size-1);
-        heap.remove(--size);
+        swap(0, --size);
+        heap.remove(size);
         map.remove(ans);
         heapify(0);
         return ans;
@@ -150,28 +150,14 @@ public class HeapGreater<T> {
      * 对当前元素位置执行heapify
      */
     public void remove(T obj){
-//        T replace = heap.get(size - 1);
-//        int index = map.get(obj);
-//        map.remove(obj);
-//        heap.remove(--size);
-//        if (obj != replace) {
-//            heap.set(index, replace);
-//            map.put(replace, index);
-//            resign(replace);
-//        }
-
-
         Integer index = map.get(obj);
-        swap(index, size-1);
-        heap.remove(--size);
+        swap(index, --size);
+        heap.remove(size);
         map.remove(obj);
         if (index != size){
             heapify(index);
             heapInsert(index);
         }
-
-//        if (index != size)
-//        resign(heap.get(index));
     }
 
     /**
