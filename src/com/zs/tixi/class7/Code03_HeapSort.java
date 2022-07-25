@@ -21,6 +21,10 @@ public class Code03_HeapSort {
      * @param arr
      */
     public static void heapSort(int[] arr){
+        // 创建大根堆：从后向前初始化使用heapify，或从前向后初始化使用heapInsert。
+        // 定义堆大小heapSize。
+        // 循环：每次将0位置与heapSize位置交换，heapSize--
+        // 对0位置执行heapify。
         if (arr == null || arr.length<2) return;
         // O(N)
         for (int i = arr.length-1; i >=0 ; i--) {

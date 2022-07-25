@@ -4,10 +4,95 @@ import com.zs.xiaobai.common.MyCompValue;
 
 /**
  * 手动构建大根堆
- * 1. 当前节点的父节点: index -1 >> 1
- * 2. 当前节点的左子节点 : index << 1 | 1
+ * 1. 当前节点的父节点: (index -1) / 2
+ * 2. 当前节点的左子节点 : index * 2 + 1
  */
 public class Code02_Heap {
+    public static void main(String[] args) {
+    }
+
+    /**
+     * 堆接口定义
+     */
+    public static interface HeapInterface{
+        void add(int e);
+        int poll();
+        int peek();
+        int size();
+    }
+    public static class MyMinHeap implements HeapInterface{
+
+        // 定义int[]保存数据， size表示当前大小， capacity表示容量大小
+        private int[] elementData;
+        private int size;
+        private int capacity;
+
+        public MyMinHeap(int capacity){
+            this.capacity = capacity;
+            this.size = 0;
+            elementData = new int[capacity];
+        }
+
+        @Override
+        public void add(int e) {
+            // 新加入的数据放入size位置。
+            // 对size位置执行heapInsert，尝试将size位置的数据向堆顶移动。size++
+            // 处理size达到容量上限的情况。
+            if(size==capacity) throw new IllegalStateException("heap is full.");
+            elementData[size] = e;
+            heapInsert(elementData, size++);
+        }
+
+        private void heapInsert(int[] elementData, int index) {
+            // 循环：如果当前节点值小于父节点，交换当前节点和父节点，当前节点来到父节点位置。
+            while (elementData[index] < elementData[(index -1) / 2]){
+                MyCompValue.swap(elementData, index, (index -1) / 2);
+                index = (index -1) / 2;
+            }
+        }
+
+        @Override
+        public int poll() {
+            // 取0位置的值作为返回值。
+            // 交换size-1位置和0位置的值， size--
+            // 对0位置调用heapify，尝试将0位置的值向堆底移动。
+            if(size==0) throw new IllegalStateException("heap is empty.");
+            int ans = elementData[0];
+            MyCompValue.swap(elementData, 0, --size);
+            heapify(elementData, 0, size);
+            return ans;
+        }
+
+        private void heapify(int[] elementData, int index, int size) {
+            // 定义left为左子节点。
+            // 循环：left小于size，找到两个子节点的较小节点与当前节点比较。
+            // 当前节点小于等于较小节点，返回。
+            // 否则，交换当前节点和较小节点。
+            // 更新当前节点为较小节点，更新左子节点的位置。
+            int left = index*2 +1;
+            while (left<size){
+                int smaller = left+1<size && elementData[left+1]<elementData[left] ? left+1 : left;
+                if(elementData[index] <= elementData[smaller]){
+                    return;
+                }
+                MyCompValue.swap(elementData, index, smaller);
+                index = smaller;
+                left = index*2 + 1;
+            }
+        }
+
+        @Override
+        public int peek() {
+            // 返回0位置的值，处理size==0的情况。
+            if(size==0) throw new IllegalStateException("heap is empty.");
+            return elementData[0];
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+    }
     public static class MyMaxHeap{
         private int[] heap; // 堆空间
         private final int limit; // 堆容量
@@ -74,9 +159,9 @@ public class Code02_Heap {
          * @param index 新增数下标
          */
         private void heapInsert(int[] heap, int index) {
-            while (heap[index] > heap[(index-1)>>1]){
-                MyCompValue.swap(heap, index, (index-1)>>1);
-                index = (index-1)>>1;
+            while (heap[index] > heap[(index-1)/2]){
+                MyCompValue.swap(heap, index, (index-1)/2);
+                index = (index-1)/2;
             }
         }
 

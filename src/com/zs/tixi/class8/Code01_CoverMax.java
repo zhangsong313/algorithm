@@ -44,6 +44,13 @@ public class Code01_CoverMax {
      * @return
      */
     public static int coverMax(Segment[] segments){
+        // 先将线段集合排序，排序规则：按start排序。
+        // 创建集合set，每次加入一个线段。
+        // 将集合中end小于等于加入线段start的线段全部删除。集合内的线段数量为此时的重合线段数。
+        // 由于每次需要遍历集合内的线段，因此时间复杂度为O(N^2)
+        // 使用堆替代集合set，每次从堆顶弹出end小于等于新加入的start的线段，直到没有符合条件的位置。
+        // 堆总计弹出N次，每次代价为logN
+        // 因此总的时间复杂度为O(N*logN)
         if (segments == null || segments.length==0) return 0;
         List<Segment> sortedSegList = Arrays.asList(segments)
                 .stream().sorted((seg1, seg2) -> seg1.start - seg2.start).collect(Collectors.toList());
