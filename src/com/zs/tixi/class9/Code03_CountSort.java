@@ -22,6 +22,10 @@ public class Code03_CountSort {
      * @param arr
      */
     public static void countSort(int[] arr){
+        // 遍历arr，找到数组中的最小值min和最大值max。
+        // 创建一个max-min+1大小的int数组bucket用来统计每个min到max范围内每个数有多少个。
+        // 遍历arr，换算出每个数在bucket中的下标：arr[i]-min。bucket数组中对应下标加一。
+        // 遍历bucket：每个大于0的桶减一直到0，每次减一将对应的数字放入arr。
         if (arr == null || arr.length<2) return;
 
         int max = arr[0];

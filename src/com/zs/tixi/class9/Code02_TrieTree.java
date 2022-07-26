@@ -17,6 +17,14 @@ import java.util.Map;
  *          查询符合指定前缀的字符串个数
  */
 public class Code02_TrieTree {
+
+    public static void main(String[] args) {
+        Trie trie = new Trie();
+        trie.add("abc");
+        trie.add("abcd");
+        trie.remove("abcd");
+        System.out.println();
+    }
     /**
      * 前缀树的节点对象
      * pass属性：有多少个字符串经过该节点
@@ -58,13 +66,18 @@ public class Code02_TrieTree {
          *  currNode的end+1
          */
         public void add(String word){
+            // 字符串拆解为字符数组。
+            // 当前节点curNode指向root节点，root节点的pass++
+            // 循环：每到一个字符，尝试寻找这个字符的路。没路新建，有路复用。
+            // curNode根据当前字符的路来到下一节点。pass++
+            // 循环结束curNode来到了最后一个节点。end++
             if (word==null) return;
             char[] charArr = word.toCharArray();
             Node currNode = root;
             root.pass++; // 此处可以使用root的pass值来记录前缀树中总共有多少个字符串（换一种说法，总共有多少字符串是以""开头的）
             for (int i = 0; i < charArr.length; i++) {
                 char currChar = charArr[i];
-                if (currNode.nexts.containsKey(currChar) == false){
+                if (currNode.nexts.containsKey(Integer.valueOf(currChar)) == false){
                     currNode.nexts.put(Integer.valueOf(currChar), new Node());
                 }
                 currNode = currNode.nexts.get(Integer.valueOf(currChar));
@@ -91,17 +104,24 @@ public class Code02_TrieTree {
          * currNode.end-1
          */
         public void remove(String word){
+            // 首先调用count函数判断前缀树中有没有当前字符串，没有直接返回。
+            // 字符串拆解为字符数组。
+            // 当前节点curNode指向root节点，root节点的pass--
+            // 循环：curNode根据当前字符的路找到下一节点nextNode。nextNode.pass--
+            // 如果nextNode.pass减后为0,移除curNode指向当前字符的路，直接返回。
+            // 循环结束curNode来到了最后一个节点。end++
             if (count(word) == 0) return;
             char[] chars = word.toCharArray();
             Node currNode = root;
+            currNode.pass--;
             for (int i = 0; i < chars.length; i++) {
                 char currChar = chars[i];
-                currNode.pass--;
                 Node nextNode = currNode.nexts.get(Integer.valueOf(currChar));
                 if (nextNode.pass==1){
                     currNode.nexts.remove(Integer.valueOf(currChar));
                     return;
                 }
+                nextNode.pass--;
                 currNode = nextNode;
             }
             currNode.end--;
@@ -125,6 +145,11 @@ public class Code02_TrieTree {
          */
         public int count(String word){
 
+            // 字符串拆解为字符数组。
+            // 当前节点curNode指向root
+            // 循环：curNode根据当前字符的路找到下一节点nextNode。
+            // 如果nextNode为null,说明没有符合条件的字符串，直接返回。
+            // 循环结束curNode来到了最后一个节点。返回curNode的end值
             if (word == null) return 0;
 
             char[] chars = word.toCharArray();
@@ -158,6 +183,11 @@ public class Code02_TrieTree {
         public int countByPrefix(String prefix){
             if (prefix == null) return 0;
 
+            // 字符串拆解为字符数组。
+            // 当前节点curNode指向root
+            // 循环：curNode根据当前字符的路找到下一节点nextNode。
+            // 如果nextNode为null,说明没有符合条件的字符串，直接返回。
+            // 循环结束curNode来到了最后一个节点。返回curNode的pass值
             char[] chars = prefix.toCharArray();
             Node currNode = root;
             for (int i = 0; i < chars.length; i++) {

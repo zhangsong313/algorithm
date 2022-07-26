@@ -33,6 +33,15 @@ public class Code04_RadixSort {
     public static void radixSort(int[] arr) {
         if (arr == null || arr.length<2) return;
 
+        // 遍历数组，找到数组的最大值，同时得到最大值的位数maxLvl。
+        // 循环：[1..maxLvl]：curLvl
+        //      创建一个help数组作为辅助数组大小为arr.length
+        //      创建一个bucket数组作为桶数组，大小为10
+        //      遍历arr，得到每个数在curLvl位的数字。bucket的当前下标加1。
+        //      遍历bucket，每个位置更新为之前的所以位置的和。（此时得到了每个桶对应第一个数应该放到help数组的哪个位置）
+        //      遍历数组arr，获取当前数在curLvl位的数字curLvlNum。help的bucket[curLvlNum]设置为当前数字。
+        //          bucket[curLvlNum]++（bucket位置的数要放的位置向后移动一位）
+        //      将help的结果复制到arr。
         int maxLvl = getMaxLvl(arr);
         for (int currLvl = 1; currLvl <=maxLvl ; currLvl++) {
             int[] help = new int[arr.length];
@@ -51,9 +60,8 @@ public class Code04_RadixSort {
                 help[bucket[currLvlNum]] = arr[i];
                 bucket[currLvlNum]++;
             }
-            int arrIndex = 0;
             for (int i = 0; i < help.length; i++) {
-                arr[arrIndex++] = help[i];
+                arr[i] = help[i];
             }
         }
     }
