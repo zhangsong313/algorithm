@@ -25,7 +25,7 @@ public class Code01_FindFirstIntersectNode {
      * 获取A链表的入环节点loop1
      * 获取B链表的入环节点loop2
      * 情况2求解相交点：noLoop函数
-     * 情况2求相交点：bothLoop函数
+     * 情况3求相交点：bothLoop函数
      * 其它情况（情况1）：返回null;
      *
      * @param head1
