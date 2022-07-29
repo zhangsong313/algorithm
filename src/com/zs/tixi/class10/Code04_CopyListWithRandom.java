@@ -36,6 +36,8 @@ public class Code04_CopyListWithRandom {
      * @return
      */
     public static Node copyRandomList1(Node head) {
+        // 定义map，每个node为key，根据node克隆出的新节点为val放入map。
+        // 遍历链表，根据每个node的next和rand指针为对应map中的克隆节点设置next和rand指针。
         if (head == null) return null;
         Map<Node, Node> map = new HashMap<>();
         Node curr = head;
@@ -76,6 +78,9 @@ public class Code04_CopyListWithRandom {
      * @return
      */
     public static Node copyRandomList2(Node head) {
+        // 在每个node后插入node的克隆节点。（不需要map的情况下，记录了node和克隆节点的关系。）
+        // 根据node的rand指针设置克隆节点的rand指针。
+        // 将node和克隆节点分开为两条单独的链表（设置next指针）
         if (head==null) return null;
         Node curr = head;
         while (curr!=null){

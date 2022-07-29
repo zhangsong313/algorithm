@@ -63,12 +63,11 @@ public class MyCompValue {
     }
 
     public static void printArr(int[] arr){
-        System.out.print("[");
-        for (int i : arr){
-            System.out.print(i + ", ");
+        List<Integer> list = new ArrayList<>();
+        for (int i : arr) {
+            list.add(i);
         }
-        System.out.print("]");
-        System.out.println();
+        System.out.println(list);
     }
 
     public static void printErr(Object... arr){
@@ -290,7 +289,7 @@ public class MyCompValue {
     public static int[] transIntToBitArr(int num){
         int[] arr = new int[32];
         for (int i = 31; i >=0; i--) {
-            arr[i] = (num & (1 << i))==0 ? 0 : 1;
+            arr[i] = (num & (1 << 31-i))==0 ? 0 : 1;
         }
         return arr;
     }

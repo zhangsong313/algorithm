@@ -1,7 +1,10 @@
 package com.zs.tixi.class10;
 
+import com.zs.xiaobai.common.MyCompValue;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /*
  *      2）将单向链表按某值划分成左边小中间相等，右边大的形式。
@@ -28,37 +31,36 @@ public class Code03_SmallerEqualBigger {
      * @return
      */
     public static Node listPartition1(Node head, int pivot) {
-        if (head == null ) return null;
-        if (head.next == null) return head;
-
+        // 将链表节点依次放入list中。
+        // 定义小于区域指针和大于区域指针。根据pivot进行分区。
+        // 将list中的节点串起成链表。注意最后一个节点的next需要设置为null。
+        // 返回链表头节点
+        if(head==null) return null;
         List<Node> list = new ArrayList<>();
         while (head != null){
             list.add(head);
             head = head.next;
         }
 
-        int smaller = -1;
-        int bigger = list.size();
-        int currIndex=0;
-        while (currIndex!=bigger){
-            if (list.get(currIndex).value < pivot){
-                smaller++;
-                swap(list, smaller, currIndex);
-                currIndex++;
-            } else if (list.get(currIndex).value == pivot){
-                currIndex++;
-            } else {
-                bigger--;
-                swap(list, currIndex, bigger);
+        int lessArea = -1;
+        int bigArea = list.size();
+        int cur = 0;
+        while (cur<bigArea){
+            if(list.get(cur).value < pivot){
+                swap(list, cur++, ++lessArea);
+            }else if(list.get(cur).value == pivot){
+                cur++;
+            }else {
+                swap(list, cur, --bigArea);
             }
         }
 
-        Node curr = list.get(0);
+        Node node = list.get(0);
         for (int i = 1; i < list.size(); i++) {
-            curr.next = list.get(i);
-            curr = list.get(i);
+            node.next = list.get(i);
+            node = node.next;
         }
-        curr.next = null;
+        node.next = null;
         return list.get(0);
     }
 
@@ -93,51 +95,67 @@ public class Code03_SmallerEqualBigger {
      * @return
      */
     public static Node listPartition2(Node head, int pivot) {
-        Node sH=null, sT=null, eH=null, eT=null, bH=null, bT=null;
+        // 定义smallHead, smallTail, equalsHead, equalsTail, bigHead, bigTail用来表示小于区域链表，等于区域链表，大于区域链表。
+        // 通过与pivot相比找到对应区域的尾指针tail，tail.next指向当前节点。tail更新为当前节点。
+        // 将三条链表串起来，这步是难点。(定义head和tail。先合并小于区域，再合并等于区域，再合并大于区域，最后设置tail.next为null)
+        if(head==null) return null;
+        Node smallHead=null, smallTail=null, equalsHead=null, equalsTail=null, bigHead=null, bigTail=null;
         while (head!=null){
-            if (head.value<pivot){
-                if(sH!=null){
-                    sT.next = head;
-                    sT = head;
-                } else {
-                    sH = sT = head;
+            if(head.value < pivot){
+                if(smallHead!=null){
+                    smallTail.next = head;
+                    smallTail = head;
+                }else {
+                    smallHead = smallTail = head;
                 }
-            }
-            if (head.value==pivot){
-                if (eH!=null){
-                    eT.next=head;
-                    eT = head;
-                } else{
-                    eH = eT = head;
+            }else if(head.value == pivot){
+                if(equalsHead!=null){
+                    equalsTail.next = head;
+                    equalsTail = head;
+                }else {
+                    equalsHead = equalsTail = head;
                 }
-            }
-            if (head.value>pivot){
-                if (bH!= null){
-                    bT.next = head;
-                    bT = head;
-                } else {
-                    bH = bT= head;
+            }else {
+                if(bigHead!=null){
+                    bigTail.next = head;
+                    bigTail = head;
+                }else {
+                    bigHead = bigTail = head;
                 }
             }
 
             head = head.next;
-//            Node next = head.next;
-//            head.next = null;
-//            head = next;
-        }
-        if (sH!= null){
-            sT.next = eH;
-            eT = eT==null?sT:eT;
-        }
-        if (eH!=null){
-            eT.next = bH;
         }
 
-        // 如果在分区过程中没有对tail的next设置为null。需要将合并后的链表尾部设置为null
-        Node tail = bT!=null? bT : eT!=null?eT:sT;
-        if (tail!=null) tail.next = null;
+        head = null;
+        Node tail = null;
 
-        return sH != null ? sH : ( eH != null ? eH : bH );
+        if(smallTail!=null){
+            head = smallHead;
+            tail = smallTail;
+        }
+        if(equalsTail!=null){
+            if(head!=null){
+                tail.next = equalsHead;
+                tail = equalsTail;
+            }else {
+                head = equalsHead;
+                tail = equalsTail;
+            }
+        }
+        if(bigHead!=null){
+            if(head!=null){
+                tail.next = bigHead;
+                tail = bigTail;
+            }else {
+                head = bigHead;
+                tail = bigTail;
+            }
+        }
+
+        tail.next = null;
+
+        return head;
     }
 
 
@@ -162,17 +180,61 @@ public class Code03_SmallerEqualBigger {
     }
 
     public static void main(String[] args) {
-        Node head1 = new Node(7);
-        head1.next = new Node(9);
-        head1.next.next = new Node(1);
-        head1.next.next.next = new Node(8);
-        head1.next.next.next.next = new Node(5);
-        head1.next.next.next.next.next = new Node(2);
-        head1.next.next.next.next.next.next = new Node(5);
-        printLinkedList(head1);
-//         head1 = listPartition1(head1, 5);
-        head1 = listPartition2(head1, 5);
-        printLinkedList(head1);
+        checkListPartition(1000, 99, 99, Code03_SmallerEqualBigger::listPartition1);
+        checkListPartition(1000, 99, 99, Code03_SmallerEqualBigger::listPartition2);
+//        Node head1 = new Node(7);
+//        head1.next = new Node(9);
+//        head1.next.next = new Node(1);
+//        head1.next.next.next = new Node(8);
+//        head1.next.next.next.next = new Node(5);
+//        head1.next.next.next.next.next = new Node(2);
+//        head1.next.next.next.next.next.next = new Node(5);
+//        printLinkedList(head1);
+////         head1 = listPartition1(head1, 5);
+//        head1 = listPartition2(head1, 5);
+//        printLinkedList(head1);
 
+    }
+
+    private static void checkListPartition(int times, int maxLen, int maxVal, BiFunction<Node, Integer, Node> fun){
+        final int small = 1;
+        final int equals = 2;
+        final int big = 3;
+        MyCompValue.times(times, ()->{
+            int len = (int)(Math.random()*(maxLen+1));
+            Node head = randomLinkedList(len, maxVal);
+            int pivot = (int)(Math.random()*(maxVal+1));
+            Node newHead = fun.apply(head, pivot);
+            if(len != getListLen(newHead)) {
+                throw new RuntimeException("error");
+            }
+
+            int pre = small;
+            while (newHead!=null){
+                if(newHead.value<pivot){
+                    if(small<pre) throw new RuntimeException("error");
+                }else if(newHead.value==pivot){
+                    if(equals<pre) throw new RuntimeException("error");
+                    pre = equals;
+                }else {
+                    if(big<pre) throw new RuntimeException("error");
+                    pre = big;
+                }
+                newHead = newHead.next;
+            }
+        });
+    }
+
+    private static int getListLen(Node head){
+        if(head == null) return 0;
+        return getListLen(head.next)+1;
+    }
+
+    private static Node randomLinkedList(int len, int maxVal){
+        if(len==0) return null;
+        int val = (int)(Math.random()*(maxVal+1));
+        Node node = new Node(val);
+        node.next = randomLinkedList(len-1, maxVal);
+        return node;
     }
 }
