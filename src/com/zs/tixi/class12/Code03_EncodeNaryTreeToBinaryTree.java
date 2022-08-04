@@ -47,10 +47,14 @@ public class Code03_EncodeNaryTreeToBinaryTree {
          * @param root
          * @return
          */
-        public TreeNode encode(Node root) {
-            if (root==null) return null;
+        public TreeNode encode(Node root){
+            // 根据root的值构建TreeNode作为头节点head。
+            // root的children调用en方法转换为head的left子树。
+
+            if(root==null) return null;
             TreeNode head = new TreeNode(root.val);
-            head.left = en(root.children);
+            List<Node> children = root.children;
+            head.left = en(children);
             return head;
         }
 
@@ -71,21 +75,24 @@ public class Code03_EncodeNaryTreeToBinaryTree {
          * @param children
          * @return
          */
-        private TreeNode en(List<Node> children) {
-            if (children==null||children.isEmpty()) return null;
-            TreeNode head = null;
+        private TreeNode en(List<Node> children){
+            // 如果children为空直接返回null。
+            // children的每个节点转换为TreeNode，沿着left的右边界一路挂下去。
+            // 同时对于沿途每个转换的TreeNode，将TreeNode的children递归转换为TreeNode的左子树。
+            if(children==null) return null;
+            TreeNode left = null;
             TreeNode curr = null;
             for (Node child : children) {
                 TreeNode newNode = new TreeNode(child.val);
-                curr = newNode;
-                if (head == null){
-                    head = newNode;
-                } else {
+                if(left==null){
+                    left = newNode;
+                }else{
                     curr.right = newNode;
                 }
-                curr.left = en(child.children);
+                newNode.left = en(child.children);
+                curr = newNode;
             }
-            return head;
+            return left;
         }
 
         // Decodes your binary tree to an n-ary tree.
@@ -97,6 +104,8 @@ public class Code03_EncodeNaryTreeToBinaryTree {
          * @return
          */
         public Node decode(TreeNode root) {
+            // 根据root的值创建出多叉树的头节点head。
+            // head的children从root的左子树转换而来。
             if (root == null) {
                 return null;
             }
@@ -117,6 +126,9 @@ public class Code03_EncodeNaryTreeToBinaryTree {
          * @return
          */
         public List<Node> de(TreeNode root) {
+            // 创建集合children用来收集多叉树子节点。
+            // 沿着当前节点的右边界，将二叉树节点转换为多叉树节点，然后加入children。
+            // 对于沿途的每个节点，节点的左子树递归转换为多叉树节点的children。
             List<Node> childList = new ArrayList<>();
             TreeNode curr = root;
             while (curr!=null){

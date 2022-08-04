@@ -32,6 +32,12 @@ public class Code06_SuccessorNode {
      * @return
      */
     public static Node getSuccessorNode(Node node){
+        // 当前节点为null，直接返回null（无法根据空节点查找）
+        // 中序遍历的顺序为：左子树，头节点，右子树。
+        // 情况一：将node看作头节点，如果右子树不为空，后继节点为右子树的最左节点。
+        // 情况二：如果父节点不为空，且node为左子树，后继节点为父节点。
+        // 情况三：如果父节点不为空，且node为右子树，将父节点整体作为左子树考察情况二：
+        //          考虑父节点的父节点不为空且父节点为左子树的情况，直到父节点为空。
         if (node == null) return null;
         if (node.right != null){
             return getMostLeftNode(node.right);

@@ -46,6 +46,9 @@ public class Code01_IsCBT {
      * @return
      */
     public static boolean isCBT(Node head){
+        // 二叉树的按层遍历。
+        // 遇到左子树为空，右子树不为空，返回false。
+        // 如果之前已经有子节点为空的情况。再遇到子节点不为空，返回false。
         if(head==null) return true;
         Queue<Node> queue = new LinkedList<>();
         queue.add(head);

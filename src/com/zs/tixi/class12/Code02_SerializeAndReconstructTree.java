@@ -30,6 +30,9 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Queue<String> preSerial(Node head){
+        // 二叉树带着队列queue做先序遍历。
+        // 如果当前节点为null，将null加入queue。
+        // 当前节点不为null，将当前节点值加入queue，然后递归处理子节点。
         Queue<String> queue = new LinkedList<>();
         pre(head, queue);
         return queue;
@@ -58,6 +61,11 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Node preDeserial(Queue<String> prelist) {
+        // 从队列serialQueue中取出节点，
+        // 如果节点为空，返回null。
+        // 节点不为空，用当前值构建节点，作为头节点。
+        // 递归调用构建left子节点。
+        // 递归调用构建right子节点。
         if (prelist==null) return null;
         String curr = prelist.poll();
         if (curr == null){
@@ -82,6 +90,9 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Queue<String> posSerial(Node head){
+        // 带着队列queue做后序遍历。
+        // 如果当前节点为null，将null加入queue。
+        // 当前节点不为null，递归处理左子节点。递归处理右子节点，当前节点加入队列queue。
         Queue<String> queue = new LinkedList<>();
         pos(head, queue);
         return queue;
@@ -106,6 +117,8 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Node posDeserial(Queue<String> poslist){
+        // 使用栈stack将队列中的节点全部加入。
+        // 带着栈stack做先序遍历。和先序反序列化的流程一样。
         if (poslist==null) return null;
         Stack<String> reverseList = new Stack<>();
         while (!poslist.isEmpty()){
@@ -151,6 +164,9 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Queue<String> levelSerial(Node head){
+        // 带着queue做按层遍历。
+        // 如果当前节点为null，将null加入queue。
+        // 当前节点不为空，将当前节点值加入queue。
         Queue<String> queue = new LinkedList<>();
         Queue<Node> nodeQueue = new LinkedList<>();
         nodeQueue.add(head);
@@ -190,6 +206,10 @@ public class Code02_SerializeAndReconstructTree {
      * @return
      */
     public static Node levelDeSerial(Queue<String> levelList){
+        // 从序列化的队列serialQueue中依次弹出节点值。
+        // 定义用来按层构建二叉树的队列queue。
+        // 从serialQueue中取出一个节点作为第一层节点放入queue中，然后采用按层遍历的方式处理queue。
+        // 在queue按层构建二叉树的过程中，从serialQueue中取出需要的节点作为子节点。直到queue为空。
         if (levelList==null) return null;
         Queue<Node> lastLvlQueue = new LinkedList<>();
         String curr = levelList.poll();
